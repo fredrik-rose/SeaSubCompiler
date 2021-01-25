@@ -2,6 +2,15 @@
 
 A compiler for a small subset (sub) of the C (sea) programming language.
 
+## Usage
+
+Stand in the root if the SeaSubCompiler directory and run:
+```
+python main.py
+```
+
+Currently only runs a toy example.
+
 ## Grammar
 
 This section defines the grammar of the sea sub language.

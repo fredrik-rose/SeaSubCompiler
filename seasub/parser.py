@@ -4,6 +4,25 @@ The parser of the sea sub compiler.
 from seasub import lexer as seasublex
 
 
+class NoOperation:
+    def __repr__(self):
+        return "NoOperation()"
+
+    def __str__(self):
+        return "NoOperation"
+
+
+class CompoundStatement:
+    def __init__(self, statements):
+        self.statements = statements
+
+    def __repr__(self):
+        return f"CompoundStatement({self.statements})"
+
+    def __str__(self):
+        return "\n".join(f"{str(statement)}" for statement in self.statements)
+
+
 class BinaryOperator:
     def __init__(self, operator, a, b):
         self.operator = operator.value
@@ -41,9 +60,44 @@ class Number:
 
 
 def parse(text):
-    def program(lexer):
-        node = additive_expression(lexer)
+    def translation_unit(lexer):
+        node = compound_statement(lexer)
         lexer.eat('EOF')
+        return node
+
+    def compound_statement(lexer):
+        lexer.eat('LEFT_CURLY_BRACKET')
+        if lexer.peek().type == 'RIGHT_CURLY_BRACKET':
+            node = NoOperation()
+        else:
+            node = statement_list(lexer)
+        lexer.eat('RIGHT_CURLY_BRACKET')
+        return node
+
+    def statement_list(lexer):
+        statements = [statement(lexer)]
+        while lexer.peek().type != 'RIGHT_CURLY_BRACKET':
+            statements.append(statement(lexer))
+        node = CompoundStatement(statements)
+        return node
+
+    def statement(lexer):
+        if lexer.peek().type == 'LEFT_CURLY_BRACKET':
+            node = compound_statement(lexer)
+        else:
+            node = expression_statement(lexer)
+        return node
+
+    def expression_statement(lexer):
+        if lexer.peek().type == 'SEMICOLON':
+            node = NoOperation()
+        else:
+            node = expression(lexer)
+        lexer.eat('SEMICOLON')
+        return node
+
+    def expression(lexer):
+        node = additive_expression(lexer)
         return node
 
     def additive_expression(lexer):
@@ -81,4 +135,4 @@ def parse(text):
             node = Number(number)
         return node
 
-    return program(seasublex.Lexer(text))
+    return translation_unit(seasublex.Lexer(text))

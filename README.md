@@ -16,8 +16,30 @@ Currently only runs a toy example.
 This section defines the grammar of the sea sub language.
 
 ```
-program ->
-    additive_expression EOF
+translation_unit ->
+    compound_statement EOF
+
+compound_statement ->
+    '{' '}' |
+    '{' statement_list '}'
+
+statement_list->
+    statement |
+    statement_list statement
+=> / remove left recursion / =>
+statement_list ->
+    (statement)+
+
+statement ->
+    compound_statement |
+    expression_statement
+
+expression_statement ->
+    ';' |
+    expression ';'
+
+expression ->
+    additive_expression
 
 additive_expression ->
     multiplicative_expression |

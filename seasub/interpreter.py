@@ -17,6 +17,12 @@ class NodeVisitor:
 
 
 class Intepreter(NodeVisitor):
+    def visit_NoOperation(self, node):
+        return None
+
+    def visit_CompoundStatement(self, node):
+        return [self.visit(statement) for statement in node.statements]
+
     def visit_BinaryOperator(self, node):
         operators = {'+': lambda a, b: a + b,
                      '-': lambda a, b: a - b,

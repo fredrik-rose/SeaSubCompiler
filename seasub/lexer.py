@@ -30,10 +30,13 @@ class Lexer:
 
 def tokenize(text):
     token_specification = [
+        ('LEFT_CURLY_BRACKET', r'\{'),  # Left curly bracket.
+        ('RIGHT_CURLY_BRACKET', r'\}'),  # Right curly bracket.
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number.
         ('ARITHMETIC_OPERATOR', r'[+\-*/]'),  # Arithmetic operators.
         ('LEFT_PARENTHESIS', r'\('),  # Left parenthesis.
         ('RIGHT_PARENTHESI', r'\)'),  # Right parenthesis.
+        ('SEMICOLON', r';'),  # Semicolon.
         ('NEWLINE', r'\n'),  # Line ending.
         ('SKIP', r'[ \t]+'),  # Skip over spaces and tabs.
         ('MISMATCH', r'.'),  # Any other character.

@@ -23,6 +23,31 @@ class CompoundStatement:
         return "\n".join(f"{str(statement)}" for statement in self.statements)
 
 
+class Definition:
+    def __init__(self, type_specifier, identifier, value):
+        self.type_specifier = type_specifier.value
+        self.identifier = identifier
+        self.value = value
+
+    def __repr__(self):
+        return f"Definition({self.type_specifier}, {self.identifier}, {self.value})"
+
+    def __str__(self):
+        return f"{str(self.type_specifier)} {str(self.identifier)} = {str(self.value)}"
+
+
+class Assignment:
+    def __init__(self, identifier, value):
+        self.identifier = identifier
+        self.value = value
+
+    def __repr__(self):
+        return f"Assignment({repr(self.identifier)}, {repr(self.value)})"
+
+    def __str__(self):
+        return f"{self.identifier} = {self.value}"
+
+
 class BinaryOperator:
     def __init__(self, operator, a, b):
         self.operator = operator.value
@@ -48,6 +73,17 @@ class UnaryOperator:
         return f"({self.operator}{self.a})"
 
 
+class Identifier:
+    def __init__(self, name):
+        self.name = name.value
+
+    def __repr__(self):
+        return f"Identifier({repr(self.name)})"
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class Number:
     def __init__(self, value):
         self.value = value.value
@@ -70,15 +106,31 @@ def parse(text):
         if lexer.peek().type == 'RIGHT_CURLY_BRACKET':
             node = NoOperation()
         else:
-            node = statement_list(lexer)
+            node = block_item_list(lexer)
         lexer.eat('RIGHT_CURLY_BRACKET')
         return node
 
-    def statement_list(lexer):
-        statements = [statement(lexer)]
+    def block_item_list(lexer):
+        block_items = [block_item(lexer)]
         while lexer.peek().type != 'RIGHT_CURLY_BRACKET':
-            statements.append(statement(lexer))
-        node = CompoundStatement(statements)
+            block_items.append(block_item(lexer))
+        node = CompoundStatement(block_items)
+        return node
+
+    def block_item(lexer):
+        if lexer.peek().type == 'TYPE_SPECIFIER':
+            node = declaration(lexer)
+        else:
+            node = statement(lexer)
+        return node
+
+    def declaration(lexer):
+        type_specifier = lexer.eat('TYPE_SPECIFIER')
+        variable = identifier(lexer)
+        lexer.eat('ASSIGNMENT')
+        value = expression(lexer)
+        lexer.eat('SEMICOLON')
+        node = Definition(type_specifier, variable, value)
         return node
 
     def statement(lexer):
@@ -92,7 +144,10 @@ def parse(text):
         if lexer.peek().type == 'SEMICOLON':
             node = NoOperation()
         else:
-            node = expression(lexer)
+            variable = identifier(lexer)
+            lexer.eat('ASSIGNMENT')
+            value = expression(lexer)
+            node = Assignment(variable, value)
         lexer.eat('SEMICOLON')
         return node
 
@@ -130,9 +185,16 @@ def parse(text):
             lexer.eat('LEFT_PARENTHESIS')
             node = additive_expression(lexer)
             lexer.eat('RIGHT_PARENTHESI')
+        elif lexer.peek().type == 'IDENTIFIER':
+            node = identifier(lexer)
         else:
             number = lexer.eat('NUMBER')
             node = Number(number)
+        return node
+
+    def identifier(lexer):
+        name = lexer.eat('IDENTIFIER')
+        node = Identifier(name)
         return node
 
     return translation_unit(seasublex.Lexer(text))

@@ -21,14 +21,18 @@ translation_unit ->
 
 compound_statement ->
     '{' '}' |
-    '{' statement_list '}'
+    '{' block_item_list '}'
 
-statement_list->
-    statement |
-    statement_list statement
-=> / remove left recursion / =>
-statement_list ->
-    (statement)+
+block_item_list ->
+    block_item |
+    block_item block_item_list
+
+block_item ->
+    declaration |
+    statement
+
+declaration ->
+    TYPE_SPECIFIER identifier '=' expression ';'
 
 statement ->
     compound_statement |
@@ -36,7 +40,7 @@ statement ->
 
 expression_statement ->
     ';' |
-    expression ';'
+    identifier '=' expression ';'
 
 expression ->
     additive_expression
@@ -64,7 +68,11 @@ unary_expression ->
 
 primary_expression ->
     NUMBER |
-    '(' additive_expression ')'
+    identifier |
+    '(' expression ')'
+
+identifier ->
+    IDENTIFIER
 ```
 
 ## Architecture

@@ -8,21 +8,23 @@ from seasub import parser
 def run():
     statements = '''
     {
-        -3 +
+        a = -3 +
         -(4 + +-9)
         * 5;
 
         ;;
 
-        -3 + -(4 + +-9);
+        b = -3 + -(4 + +-9);
 
         {
-            5 + 6 - 7;
+            c = 5 + 6 - 7;
         }
 
         {
 
         }
+
+        int a = 1 + 2;
     }
     '''
     print(f"Statements: {statements}")

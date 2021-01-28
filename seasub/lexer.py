@@ -32,7 +32,10 @@ def tokenize(text):
     token_specification = [
         ('LEFT_CURLY_BRACKET', r'\{'),  # Left curly bracket.
         ('RIGHT_CURLY_BRACKET', r'\}'),  # Right curly bracket.
+        ('TYPE_SPECIFIER', r'int|double'),  # Type specifier.
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number.
+        ('IDENTIFIER', r'[_a-zA-Z][_a-zA-Z0-9]{0,30}'),  # Variable or function name.
+        ('ASSIGNMENT', r'='),  # Assignment operator.
         ('ARITHMETIC_OPERATOR', r'[+\-*/]'),  # Arithmetic operators.
         ('LEFT_PARENTHESIS', r'\('),  # Left parenthesis.
         ('RIGHT_PARENTHESI', r'\)'),  # Right parenthesis.

@@ -17,19 +17,20 @@ def run():
         b = -3 + -(4 + +-9);
 
         {
-            c = 5 + 6 - 7;
+            c = b + 6 - 7;
         }
 
         {
 
         }
 
-        int a = 1 + 2;
+        int d = 1 + 2;
     }
     '''
     print(f"Statements: {statements}")
     tree = parser.parse(statements)
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
-    result = interpreter.Intepreter().visit(tree)
-    print(f"Result: {result}")
+    interp = interpreter.Intepreter()
+    interp.visit(tree)
+    print(f"Result: {interp.symbol_table}")

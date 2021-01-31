@@ -1,6 +1,7 @@
 """
 The interpreter of the sea sub compiler.
 """
+from seasub import symbol_table as st
 
 
 class NodeVisitor:
@@ -17,17 +18,21 @@ class NodeVisitor:
 
 
 class Intepreter(NodeVisitor):
+    def __init__(self):
+        self.symbol_table = st.SymbolTable()
+
     def visit_NoOperation(self, node):
-        return None
+        pass
 
     def visit_CompoundStatement(self, node):
-        return [self.visit(statement) for statement in node.statements]
+        for statement in node.statements:
+            self.visit(statement)
 
     def visit_Definition(self, node):
-        return (node.type_specifier, self.visit(node.identifier), self.visit(node.value))
+        self.symbol_table[node.identifier.name] = self.visit(node.value)
 
     def visit_Assignment(self, node):
-        return (self.visit(node.identifier), self.visit(node.value))
+        self.symbol_table[node.identifier.name] = self.visit(node.value)
 
     def visit_BinaryOperator(self, node):
         operators = {'+': lambda a, b: a + b,
@@ -45,7 +50,7 @@ class Intepreter(NodeVisitor):
         return operators[node.operator](a)
 
     def visit_Identifier(self, node):
-        return node.name
+        return self.symbol_table[node.name]
 
     def visit_Number(self, node):
         return node.value

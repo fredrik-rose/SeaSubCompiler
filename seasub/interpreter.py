@@ -1,23 +1,11 @@
 """
 The interpreter of the sea sub compiler.
 """
+from seasub import abstract_syntax_tree as ast
 from seasub import symbol_table as st
 
 
-class NodeVisitor:
-    def visit(self, node):
-        visitor = getattr(self, self._visitor_name(node), self.visit_Undefined)
-        return visitor(node)
-
-    def visit_Undefined(self, node):
-        raise AttributeError(f"Visitor {self._visitor_name(node)}() not implemented for type {type(self).__name__}")
-
-    @staticmethod
-    def _visitor_name(node):
-        return f'visit_{type(node).__name__}'
-
-
-class Intepreter(NodeVisitor):
+class Intepreter(ast.NodeVisitor):
     def __init__(self):
         self.symbol_table = st.SymbolTable()
 

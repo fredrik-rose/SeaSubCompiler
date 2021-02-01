@@ -3,6 +3,19 @@ The abstract syntax tree of the sea sub compiler.
 """
 
 
+class NodeVisitor:
+    def visit(self, node):
+        visitor = getattr(self, self._visitor_name(node), self.visit_Undefined)
+        return visitor(node)
+
+    def visit_Undefined(self, node):
+        raise AttributeError(f"Visitor {self._visitor_name(node)}() not implemented for type {type(self).__name__}")
+
+    @staticmethod
+    def _visitor_name(node):
+        return f'visit_{type(node).__name__}'
+
+
 class NoOperation:
     def __repr__(self):
         return "NoOperation()"

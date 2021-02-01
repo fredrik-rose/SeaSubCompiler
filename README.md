@@ -21,18 +21,19 @@ translation_unit ->
 
 compound_statement ->
     '{' '}' |
-    '{' block_item_list '}'
+    '{' statement_list '}' |
+    '{' declaration_list statement_list '}'
 
-block_item_list ->
-    block_item |
-    block_item block_item_list
-
-block_item ->
+declaration_list ->
     declaration |
-    statement
+    declaration declaration_list
 
 declaration ->
-    TYPE_SPECIFIER identifier '=' expression ';'
+    TYPE_SPECIFIER identifier ';'
+
+statement_list ->
+    statement |
+    statement statement_list
 
 statement ->
     compound_statement |

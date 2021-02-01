@@ -13,27 +13,27 @@ class NoOperation:
 
 
 class CompoundStatement:
-    def __init__(self, statements):
+    def __init__(self, declarations, statements):
+        self.declarations = declarations
         self.statements = statements
 
     def __repr__(self):
-        return f"CompoundStatement({self.statements})"
+        return f"CompoundStatement({self.declarations}, {self.statements})"
 
     def __str__(self):
-        return "\n".join(f"{str(statement)}" for statement in self.statements)
+        return "\n".join(f"{str(item)}" for item in self.declarations + self.statements)
 
 
-class Definition:
-    def __init__(self, type_specifier, identifier, value):
+class Declaration:
+    def __init__(self, type_specifier, identifier):
         self.type_specifier = type_specifier.value
         self.identifier = identifier
-        self.value = value
 
     def __repr__(self):
-        return f"Definition({self.type_specifier}, {self.identifier}, {self.value})"
+        return f"Declaration({self.type_specifier}, {self.identifier})"
 
     def __str__(self):
-        return f"{str(self.type_specifier)} {str(self.identifier)} = {str(self.value)}"
+        return f"{str(self.type_specifier)} {str(self.identifier)}"
 
 
 class Assignment:
@@ -106,32 +106,32 @@ def parse(text):
         if lexer.peek().type == 'RIGHT_CURLY_BRACKET':
             node = NoOperation()
         else:
-            node = block_item_list(lexer)
+            declarations = []
+            if lexer.peek().type == 'TYPE_SPECIFIER':
+                declarations = declaration_list(lexer)
+            statements = statement_list(lexer)
+            node = CompoundStatement(declarations, statements)
         lexer.eat('RIGHT_CURLY_BRACKET')
         return node
 
-    def block_item_list(lexer):
-        block_items = [block_item(lexer)]
-        while lexer.peek().type != 'RIGHT_CURLY_BRACKET':
-            block_items.append(block_item(lexer))
-        node = CompoundStatement(block_items)
-        return node
-
-    def block_item(lexer):
-        if lexer.peek().type == 'TYPE_SPECIFIER':
-            node = declaration(lexer)
-        else:
-            node = statement(lexer)
-        return node
+    def declaration_list(lexer):
+        declarations = [declaration(lexer)]
+        while lexer.peek().type == 'TYPE_SPECIFIER':
+            declarations.append(declaration(lexer))
+        return declarations
 
     def declaration(lexer):
         type_specifier = lexer.eat('TYPE_SPECIFIER')
         variable = identifier(lexer)
-        lexer.eat('ASSIGNMENT')
-        value = expression(lexer)
         lexer.eat('SEMICOLON')
-        node = Definition(type_specifier, variable, value)
+        node = Declaration(type_specifier, variable)
         return node
+
+    def statement_list(lexer):
+        statements = [statement(lexer)]
+        while lexer.peek().type != 'RIGHT_CURLY_BRACKET':
+            statements.append(statement(lexer))
+        return statements
 
     def statement(lexer):
         if lexer.peek().type == 'LEFT_CURLY_BRACKET':

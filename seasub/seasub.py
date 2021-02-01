@@ -8,6 +8,10 @@ from seasub import parser
 def run():
     statements = '''
     {
+        int a;
+        int b;
+        int d;
+
         a = -3 +
         -(4 + +-9)
         * 5;
@@ -17,6 +21,8 @@ def run():
         b = -3 + -(4 + +-9);
 
         {
+            int c;
+
             c = b + 6 - 7;
         }
 
@@ -24,7 +30,7 @@ def run():
 
         }
 
-        int d = 1 + 2;
+        d = 1 + 2;
     }
     '''
     print(f"Statements: {statements}")

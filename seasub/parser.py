@@ -3,10 +3,9 @@ The parser of the sea sub compiler.
 """
 from seasub import abstract_syntax_tree as ast
 from seasub import error_handler as err
-from seasub import lexer as seasublex
 
 
-def parse(text):
+def parse(token_stream):
     def translation_unit(lexer):
         node = compound_statement(lexer)
         lexer.eat('EOF')
@@ -108,12 +107,12 @@ def parse(text):
         node = ast.Identifier(name)
         return node
 
-    return translation_unit(_Lexer(text))
+    return translation_unit(_Lexer(token_stream))
 
 
 class _Lexer:
-    def __init__(self, text):
-        self._tokenizer = seasublex.tokenize(text)
+    def __init__(self, token_stream):
+        self._token_stream = token_stream
         self._advance()
 
     def peek(self):
@@ -128,6 +127,6 @@ class _Lexer:
 
     def _advance(self):
         try:
-            self._current = next(self._tokenizer)
+            self._current = next(self._token_stream)
         except StopIteration:
             self._current = None

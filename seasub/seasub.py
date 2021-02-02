@@ -2,6 +2,7 @@
 The sea sub compiler.
 """
 from seasub import interpreter
+from seasub import lexer
 from seasub import parser
 
 
@@ -34,7 +35,8 @@ def run():
     }
     '''
     print(f"Statements: {statements}")
-    tree = parser.parse(statements)
+    token_stream = lexer.tokenize(statements)
+    tree = parser.parse(token_stream)
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
     interp = interpreter.Intepreter()

@@ -38,7 +38,7 @@ def tokenize(text):
         elif kind == 'SKIP':
             continue
         elif kind == 'MISMATCH':
-            raise err.SeaSubSyntaxError(f"Unexpected {value!r} on line {line}:{column}")
+            raise err.SeaSubLexicalError(f"Unexpected {value!r} on line {line}:{column}")
         yield Token(kind, value, line, column)
     yield Token('EOF', None, line, 0)
 

@@ -6,28 +6,6 @@ import re
 from seasub import error_handler as err
 
 
-class Lexer:
-    def __init__(self, text):
-        self._tokenizer = tokenize(text)
-        self._advance()
-
-    def peek(self):
-        return self._current
-
-    def eat(self, token_type):
-        current = self._current
-        if current.type != token_type:
-            raise err.SeaSubSyntaxError(f"Unexpected {current.value!r} on line {current.line}:{current.column}")
-        self._advance()
-        return current
-
-    def _advance(self):
-        try:
-            self._current = next(self._tokenizer)
-        except StopIteration:
-            self._current = None
-
-
 def tokenize(text):
     token_specification = [
         ('LEFT_CURLY_BRACKET', r'\{'),  # Left curly bracket.

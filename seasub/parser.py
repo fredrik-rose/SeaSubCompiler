@@ -2,6 +2,7 @@
 The parser of the sea sub compiler.
 """
 from seasub import abstract_syntax_tree as ast
+from seasub import error_handler as err
 from seasub import lexer as seasublex
 
 
@@ -107,4 +108,26 @@ def parse(text):
         node = ast.Identifier(name)
         return node
 
-    return translation_unit(seasublex.Lexer(text))
+    return translation_unit(_Lexer(text))
+
+
+class _Lexer:
+    def __init__(self, text):
+        self._tokenizer = seasublex.tokenize(text)
+        self._advance()
+
+    def peek(self):
+        return self._current
+
+    def eat(self, token_type):
+        current = self._current
+        if current.type != token_type:
+            raise err.SeaSubSyntaxError(f"Unexpected {current.value!r} on line {current.line}:{current.column}")
+        self._advance()
+        return current
+
+    def _advance(self):
+        try:
+            self._current = next(self._tokenizer)
+        except StopIteration:
+            self._current = None

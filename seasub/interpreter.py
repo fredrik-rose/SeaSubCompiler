@@ -9,18 +9,6 @@ class Intepreter(ast.NodeVisitor):
     def __init__(self):
         self.symbol_table = st.SymbolTable()
 
-    def visit_NoOperation(self, node):
-        pass
-
-    def visit_CompoundStatement(self, node):
-        for declaration in node.declarations:
-            self.visit(declaration)
-        for statement in node.statements:
-            self.visit(statement)
-
-    def visit_Declaration(self, node):
-        pass
-
     def visit_Assignment(self, node):
         self.symbol_table[node.identifier.name] = self.visit(node.value)
 

@@ -48,7 +48,7 @@ class CompoundStatement(AbstractSyntaxTreeNode):
 
 class Declaration(AbstractSyntaxTreeNode):
     def __init__(self, type_specifier, identifier):
-        self.type_specifier = type_specifier.value
+        self.type_specifier = type_specifier
         self.identifier = identifier
 
     def __repr__(self):
@@ -78,7 +78,7 @@ class Assignment(AbstractSyntaxTreeNode):
 
 class BinaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, operator, a, b):
-        self.operator = operator.value
+        self.operator = operator
         self.a = a
         self.b = b
 
@@ -94,7 +94,7 @@ class BinaryOperator(AbstractSyntaxTreeNode):
 
 class UnaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, operator, a):
-        self.operator = operator.value
+        self.operator = operator
         self.a = a
 
     def __repr__(self):
@@ -109,7 +109,7 @@ class UnaryOperator(AbstractSyntaxTreeNode):
 
 class Identifier(AbstractSyntaxTreeNode):
     def __init__(self, name):
-        self.name = name.value
+        self.name = name
 
     def __repr__(self):
         return f"Identifier({repr(self.name)})"
@@ -121,12 +121,26 @@ class Identifier(AbstractSyntaxTreeNode):
         return []
 
 
-class Number(AbstractSyntaxTreeNode):
+class IntegerConstant(AbstractSyntaxTreeNode):
     def __init__(self, value):
-        self.value = value.value
+        self.value = value
 
     def __repr__(self):
-        return f"Number({repr(self.value)})"
+        return f"IntegerConstant({repr(self.value)})"
+
+    def __str__(self):
+        return str(self.value)
+
+    def get_children(self):
+        return []
+
+
+class RealConstant(AbstractSyntaxTreeNode):
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"RealConstant({repr(self.value)})"
 
     def __str__(self):
         return str(self.value)

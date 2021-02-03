@@ -30,7 +30,12 @@ def tokenize(text):
         value = match.group()
         column = match.start() - line_start + 1
         if kind == 'NUMBER':
-            value = float(value) if '.' in value else int(value)
+            if '.' in value:
+                kind = 'DOUBLE_CONSTANT'
+                value = float(value)
+            else:
+                kind = 'INTEGER_CONSTANT'
+                value = int(value)
         elif kind == 'NEWLINE':
             line_start = match.end()
             line += 1

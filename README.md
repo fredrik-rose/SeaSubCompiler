@@ -29,7 +29,7 @@ declaration_list ->
     declaration declaration_list
 
 declaration ->
-    TYPE_SPECIFIER identifier ';'
+    type_specifier identifier ';'
 
 statement_list ->
     statement |
@@ -68,12 +68,20 @@ unary_expression ->
     '-' unary_expression
 
 primary_expression ->
-    NUMBER |
+    constant |
     identifier |
     '(' expression ')'
 
+type_specifier ->
+    'int' |
+    'double'
+
 identifier ->
     IDENTIFIER
+
+constant ->
+    INTEGER_CONSTANT |
+    DOUBLE_CONSTANT
 ```
 
 ## Architecture

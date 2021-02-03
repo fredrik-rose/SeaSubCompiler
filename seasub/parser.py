@@ -31,8 +31,8 @@ def parse(token_stream):
         return declarations
 
     def declaration(lexer):
-        type_specifier = lexer.eat('TYPE_SPECIFIER')
-        variable = identifier(lexer)
+        type_specifier = lexer.eat('TYPE_SPECIFIER').value
+        variable = identifier(lexer).name
         lexer.eat('SEMICOLON')
         node = ast.Declaration(type_specifier, variable)
         return node
@@ -54,7 +54,7 @@ def parse(token_stream):
         if lexer.peek().type == 'SEMICOLON':
             node = ast.NoOperation()
         else:
-            variable = identifier(lexer)
+            variable = identifier(lexer).name
             lexer.eat('ASSIGNMENT')
             value = expression(lexer)
             node = ast.Assignment(variable, value)
@@ -68,7 +68,7 @@ def parse(token_stream):
     def additive_expression(lexer):
         node = multiplicative_expression(lexer)
         while lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('+', '-'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR')
+            operator = lexer.eat('ARITHMETIC_OPERATOR').value
             operand = multiplicative_expression(lexer)
             node = ast.BinaryOperator(operator, node, operand)
         return node
@@ -76,14 +76,14 @@ def parse(token_stream):
     def multiplicative_expression(lexer):
         node = unary_expression(lexer)
         while lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('*', '/'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR')
+            operator = lexer.eat('ARITHMETIC_OPERATOR').value
             operand = unary_expression(lexer)
             node = ast.BinaryOperator(operator, node, operand)
         return node
 
     def unary_expression(lexer):
         if lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('+', '-'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR')
+            operator = lexer.eat('ARITHMETIC_OPERATOR').value
             operand = unary_expression(lexer)
             node = ast.UnaryOperator(operator, operand)
         else:
@@ -98,13 +98,21 @@ def parse(token_stream):
         elif lexer.peek().type == 'IDENTIFIER':
             node = identifier(lexer)
         else:
-            number = lexer.eat('NUMBER')
-            node = ast.Number(number)
+            node = constant(lexer)
         return node
 
     def identifier(lexer):
-        name = lexer.eat('IDENTIFIER')
+        name = lexer.eat('IDENTIFIER').value
         node = ast.Identifier(name)
+        return node
+
+    def constant(lexer):
+        if lexer.peek().type == 'INTEGER_CONSTANT':
+            number = lexer.eat('INTEGER_CONSTANT').value
+            node = ast.IntegerConstant(number)
+        else:
+            number = lexer.eat('DOUBLE_CONSTANT').value
+            node = ast.RealConstant(number)
         return node
 
     return translation_unit(_Lexer(token_stream))

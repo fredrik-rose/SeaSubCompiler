@@ -10,7 +10,7 @@ class Intepreter(ast.NodeVisitor):
         self.symbol_table = st.SymbolTable()
 
     def visit_Assignment(self, node):
-        self.symbol_table[node.identifier.name] = self.visit(node.value)
+        self.symbol_table[node.identifier] = self.visit(node.value)
 
     def visit_BinaryOperator(self, node):
         operators = {'+': lambda a, b: a + b,
@@ -30,5 +30,8 @@ class Intepreter(ast.NodeVisitor):
     def visit_Identifier(self, node):
         return self.symbol_table[node.name]
 
-    def visit_Number(self, node):
+    def visit_IntegerConstant(self, node):
+        return node.value
+
+    def visit_RealConstant(self, node):
         return node.value

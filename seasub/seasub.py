@@ -4,6 +4,7 @@ The sea sub compiler.
 from seasub import interpreter
 from seasub import lexer
 from seasub import parser
+from seasub import symbol_table as st
 
 
 def run():
@@ -28,6 +29,12 @@ def run():
         }
 
         {
+            int e;
+
+            e = 8;
+        }
+
+        {
 
         }
 
@@ -41,4 +48,6 @@ def run():
     print(f"Statement(s):\n{tree}\n")
     interp = interpreter.Intepreter()
     interp.visit(tree)
-    print(f"Result: {interp.symbol_table}")
+    print(f"Result: {interp.environment}")
+    symbol_table = st.attach_symbol_table(tree)
+    print(symbol_table)

@@ -103,3 +103,8 @@ language. It is this part of the compiler that implements the grammar as a recur
 ### Error Handler
 
 This component is responsible for the error handling and is used by all parts of the compiler.
+
+### Symbol Table
+
+This component is responsible to manage all kinds of symbols in the language, for built-in types, variables and
+functions.

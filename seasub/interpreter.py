@@ -2,15 +2,14 @@
 The interpreter of the sea sub compiler.
 """
 from seasub import abstract_syntax_tree as ast
-from seasub import symbol_table as st
 
 
 class Intepreter(ast.NodeVisitor):
     def __init__(self):
-        self.symbol_table = st.SymbolTable()
+        self.environment = {}
 
     def visit_Assignment(self, node):
-        self.symbol_table[node.identifier] = self.visit(node.value)
+        self.environment[node.identifier] = self.visit(node.value)
 
     def visit_BinaryOperator(self, node):
         operators = {'+': lambda a, b: a + b,
@@ -28,7 +27,7 @@ class Intepreter(ast.NodeVisitor):
         return operators[node.operator](a)
 
     def visit_Identifier(self, node):
-        return self.symbol_table[node.name]
+        return self.environment[node.name]
 
     def visit_IntegerConstant(self, node):
         return node.value

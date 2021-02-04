@@ -6,10 +6,10 @@ import abc
 
 class NodeVisitor:
     def visit(self, node):
-        visitor = getattr(self, f'visit_{type(node).__name__}', self.generic_visit)
+        visitor = getattr(self, f'_visit_{type(node).__name__}', self._generic_visit)
         return visitor(node)
 
-    def generic_visit(self, node):
+    def _generic_visit(self, node):
         for child in node.get_children():
             self.visit(child)
 

@@ -91,43 +91,43 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self.visit(tree)
         assert self.current_scope == global_scope
 
-    def visit_NoOperation(self, node):
-        self.generic_visit(node)
+    def _visit_NoOperation(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_CompoundStatement(self, node):
+    def _visit_CompoundStatement(self, node):
         self.current_scope = SymbolTable(self.current_scope)
-        self.generic_visit(node)
+        self._generic_visit(node)
         self._add_symbol_table(node)
         self.current_scope = self.current_scope.outer
 
-    def visit_Declaration(self, node):
+    def _visit_Declaration(self, node):
         self.current_scope[node.identifier] = Variable(node.identifier, node.type_specifier)
-        self.generic_visit(node)
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_Assignment(self, node):
-        self.generic_visit(node)
+    def _visit_Assignment(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_BinaryOperator(self, node):
-        self.generic_visit(node)
+    def _visit_BinaryOperator(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_UnaryOperator(self, node):
-        self.generic_visit(node)
+    def _visit_UnaryOperator(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_Identifier(self, node):
-        self.generic_visit(node)
+    def _visit_Identifier(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_IntegerConstant(self, node):
-        self.generic_visit(node)
+    def _visit_IntegerConstant(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def visit_RealConstant(self, node):
-        self.generic_visit(node)
+    def _visit_RealConstant(self, node):
+        self._generic_visit(node)
         self._add_symbol_table(node)
 
     def _add_symbol_table(self, node):

@@ -157,7 +157,8 @@ class _Lexer:
     def eat(self, token_type):
         current = self._current
         if current.type != token_type:
-            raise err.SeaSubSyntaxError(f"Unexpected {current.value!r} on line {current.line}:{current.column}")
+            raise err.SeaSubSyntaxError((f"Unexpected {current.value!r} (expected {token_type!r}) "
+                                         f"on line {current.line}:{current.column}"))
         self._advance()
         return current
 

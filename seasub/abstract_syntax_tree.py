@@ -31,6 +31,38 @@ class NoOperation(AbstractSyntaxTreeNode):
         return []
 
 
+class Function(AbstractSyntaxTreeNode):
+    def __init__(self, type_specifier, identifier, parameters, body):
+        self.type_specifier = type_specifier
+        self.identifier = identifier
+        self.parameters = parameters
+        self.body = body
+
+    def __repr__(self):
+        return f"Function({self.type_specifier}, {self.identifier}, {self.parameters}, <body>)"
+
+    def __str__(self):
+        return f"{self.type_specifier} {self.identifier} ({self.parameters})\n{self.body})"
+
+    def get_children(self):
+        return self.parameters + [self.body]
+
+
+class Parameter(AbstractSyntaxTreeNode):
+    def __init__(self, type_specifier, identifier):
+        self.type_specifier = type_specifier
+        self.identifier = identifier
+
+    def __repr__(self):
+        return f"Parameter({self.type_specifier}, {self.identifier})"
+
+    def __str__(self):
+        return f"{str(self.type_specifier)} {str(self.identifier)}"
+
+    def get_children(self):
+        return []
+
+
 class CompoundStatement(AbstractSyntaxTreeNode):
     def __init__(self, declarations, statements):
         self.declarations = declarations

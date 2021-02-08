@@ -17,7 +17,21 @@ This section defines the grammar of the sea sub language.
 
 ```
 translation_unit ->
-    compound_statement EOF
+    function_definition_list EOF
+
+function_definition_list ->
+    function_definition |
+    function_definition function_definition_list
+
+function_definition ->
+    type_specifier identifier '(' parameter_list ')' compound_statement
+
+parameter_list ->
+    parameter_declaration |
+    parameter_declaration ',' parameter_list
+
+parameter_declaration ->
+    type_specifier identifier
 
 compound_statement ->
     '{' '}' |

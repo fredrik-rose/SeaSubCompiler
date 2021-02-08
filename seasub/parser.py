@@ -7,9 +7,37 @@ from seasub import error_handler as err
 
 def parse(token_stream):
     def translation_unit(lexer):
-        node = compound_statement(lexer)
+        node = function_definition_list(lexer)
         lexer.eat('EOF')
         return node
+
+    def function_definition_list(lexer):
+        function_definitions = [function_definition(lexer)]
+        while lexer.peek().type == 'TYPE_SPECIFIER':
+            function_definitions.append(function_definition(lexer))
+        return function_definitions
+
+    def function_definition(lexer):
+        type_specifier = lexer.eat('TYPE_SPECIFIER').value
+        name = identifier(lexer).name
+        lexer.eat('LEFT_PARENTHESIS')
+        parameters = parameter_list(lexer)
+        lexer.eat('RIGHT_PARENTHESIS')
+        body = compound_statement(lexer)
+        node = ast.Function(type_specifier, name, parameters, body)
+        return node
+
+    def parameter_list(lexer):
+        parameters = [parameter_declaration(lexer)]
+        while lexer.peek().type == 'COMMA':
+            lexer.eat('COMMA')
+            parameters.append(parameter_declaration(lexer))
+        return parameters
+
+    def parameter_declaration(lexer):
+        type_specifier = lexer.eat('TYPE_SPECIFIER').value
+        name = identifier(lexer).name
+        return ast.Parameter(type_specifier, name)
 
     def compound_statement(lexer):
         lexer.eat('LEFT_CURLY_BRACKET')
@@ -94,7 +122,7 @@ def parse(token_stream):
         if lexer.peek().type == 'LEFT_PARENTHESIS':
             lexer.eat('LEFT_PARENTHESIS')
             node = additive_expression(lexer)
-            lexer.eat('RIGHT_PARENTHESI')
+            lexer.eat('RIGHT_PARENTHESIS')
         elif lexer.peek().type == 'IDENTIFIER':
             node = identifier(lexer)
         else:

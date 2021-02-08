@@ -9,6 +9,7 @@ from seasub import symbol_table as st
 
 def run():
     statements = '''
+    int main(int x)
     {
         int a;
         int b;
@@ -43,7 +44,7 @@ def run():
     '''
     print(f"Statements: {statements}")
     token_stream = lexer.tokenize(statements)
-    tree = parser.parse(token_stream)
+    tree = parser.parse(token_stream)[0]  # TODO: Remove [0]
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
     interp = interpreter.Intepreter()

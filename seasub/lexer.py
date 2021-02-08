@@ -16,8 +16,9 @@ def tokenize(text):
         ('ASSIGNMENT', r'='),  # Assignment operator.
         ('ARITHMETIC_OPERATOR', r'[+\-*/]'),  # Arithmetic operators.
         ('LEFT_PARENTHESIS', r'\('),  # Left parenthesis.
-        ('RIGHT_PARENTHESI', r'\)'),  # Right parenthesis.
+        ('RIGHT_PARENTHESIS', r'\)'),  # Right parenthesis.
         ('SEMICOLON', r';'),  # Semicolon.
+        ('COMMA', r','),  # Comma.
         ('NEWLINE', r'\n'),  # Line ending.
         ('SKIP', r'[ \t]+'),  # Skip over spaces and tabs.
         ('MISMATCH', r'.'),  # Any other character.

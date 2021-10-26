@@ -74,8 +74,17 @@ def parse(token_stream):
     def statement(lexer):
         if lexer.peek().type == 'LEFT_CURLY_BRACKET':
             node = compound_statement(lexer)
+        elif lexer.peek().type == 'RETURN':
+            node = jump_statement(lexer)
         else:
             node = expression_statement(lexer)
+        return node
+
+    def jump_statement(lexer):
+        lexer.eat('RETURN')
+        value = expression(lexer)
+        node = ast.ReturnStatement(value)
+        lexer.eat('SEMICOLON')
         return node
 
     def expression_statement(lexer):

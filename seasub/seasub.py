@@ -33,6 +33,8 @@ def run():
             int e;
 
             e = 8;
+
+            return 10;
         }
 
         {
@@ -40,6 +42,8 @@ def run():
         }
 
         d = 1 + 2;
+
+        return d + 11;
     }
     '''
     print(f"Statements: {statements}")

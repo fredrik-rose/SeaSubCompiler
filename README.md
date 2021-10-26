@@ -51,7 +51,11 @@ statement_list ->
 
 statement ->
     compound_statement |
-    expression_statement
+    expression_statement |
+    jump_statement
+
+jump_statement ->
+    'return' expression ';'
 
 expression_statement ->
     ';' |

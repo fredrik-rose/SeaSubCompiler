@@ -42,7 +42,7 @@ class Function(AbstractSyntaxTreeNode):
         return f"Function({self.type_specifier}, {self.identifier}, {self.parameters}, <body>)"
 
     def __str__(self):
-        return f"{self.type_specifier} {self.identifier} ({self.parameters})\n{self.body})"
+        return f"{self.type_specifier} {self.identifier} ({self.parameters})\n{self.body}"
 
     def get_children(self):
         return self.parameters + [self.body]
@@ -61,6 +61,20 @@ class Parameter(AbstractSyntaxTreeNode):
 
     def get_children(self):
         return []
+
+
+class ReturnStatement(AbstractSyntaxTreeNode):
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"Return({repr(self.value)})"
+
+    def __str__(self):
+        return f"return {self.value}"
+
+    def get_children(self):
+        return [self.value]
 
 
 class CompoundStatement(AbstractSyntaxTreeNode):

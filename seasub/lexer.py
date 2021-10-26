@@ -11,6 +11,7 @@ def tokenize(text):
         ('LEFT_CURLY_BRACKET', r'\{'),  # Left curly bracket.
         ('RIGHT_CURLY_BRACKET', r'\}'),  # Right curly bracket.
         ('TYPE_SPECIFIER', r'int|double'),  # Type specifier.
+        ('RETURN', r'return'),  # Return keyword.
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number.
         ('IDENTIFIER', r'[_a-zA-Z][_a-zA-Z0-9]{0,30}'),  # Variable or function name.
         ('ASSIGNMENT', r'='),  # Assignment operator.

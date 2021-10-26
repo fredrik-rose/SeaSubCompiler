@@ -95,6 +95,10 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._generic_visit(node)
         self._add_symbol_table(node)
 
+    def _visit_ReturnStatement(self, node):
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+
     def _visit_CompoundStatement(self, node):
         self.current_scope = SymbolTable(self.current_scope)
         self._generic_visit(node)

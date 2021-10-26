@@ -86,6 +86,10 @@ class Variable(Symbol):
 
 
 class _SymbolTableVisitor(ast.NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self.current_scope = None
+
     def attach(self, tree, global_scope):
         self.current_scope = global_scope
         self.visit(tree)

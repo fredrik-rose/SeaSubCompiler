@@ -6,6 +6,7 @@ from seasub import abstract_syntax_tree as ast
 
 class Intepreter(ast.NodeVisitor):
     def __init__(self):
+        super().__init__()
         self.environment = {}
 
     def _visit_Assignment(self, node):

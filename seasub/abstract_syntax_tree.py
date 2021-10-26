@@ -4,9 +4,24 @@ The abstract syntax tree of the sea sub compiler.
 import abc
 
 
+def _get_nodes():
+    return (NoOperation, Function, Parameter, ReturnStatement, CompoundStatement, Declaration,
+            Assignment, BinaryOperator, UnaryOperator, Identifier, IntegerConstant, RealConstant)
+
+
 class NodeVisitor:
+    def __init__(self):
+        visitors = set(self._node_visitor(node) for node in _get_nodes())
+        for element in dir(self):
+            if element.startswith('_visit_') and element not in visitors:
+                raise AttributeError(f'{element} is not a valid visitor as the node does not exist')
+
+    @staticmethod
+    def _node_visitor(node_class):
+        return f'_visit_{node_class.__name__}'
+
     def visit(self, node):
-        visitor = getattr(self, f'_visit_{type(node).__name__}', self._generic_visit)
+        visitor = getattr(self, self._node_visitor(type(node)), self._generic_visit)
         return visitor(node)
 
     def _generic_visit(self, node):

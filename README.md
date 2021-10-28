@@ -118,6 +118,10 @@ The second step of the compiler takes tokens from the lexer as input and outputs
 the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
 language. It is this part of the compiler that implements the grammar as a recursive descent parser.
 
+### Semantic Analyzer
+Verifies the semantic correctness of the program. This includes checking type correctness and that variables are
+declared.
+
 ### Error Handler
 
 This component is responsible for the error handling and is used by all parts of the compiler.

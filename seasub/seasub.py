@@ -4,8 +4,8 @@ The sea sub compiler.
 from seasub import interpreter
 from seasub import lexer
 from seasub import parser
+from seasub import semantic_analyzer as sa
 from seasub import symbol_table as st
-
 
 def run():
     statements = '''
@@ -51,8 +51,9 @@ def run():
     tree = parser.parse(token_stream)[0]  # TODO: Remove [0]
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
+    symbol_table = st.attach_symbol_table(tree)
+    print(symbol_table)
+    sa.analyze_semantics(tree)
     interp = interpreter.Intepreter()
     interp.visit(tree)
     print(f"Result: {interp.environment}")
-    symbol_table = st.attach_symbol_table(tree)
-    print(symbol_table)

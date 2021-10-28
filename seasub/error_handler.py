@@ -9,3 +9,7 @@ class SeaSubLexicalError(SyntaxError):
 
 class SeaSubSyntaxError(SyntaxError):
     pass
+
+
+class SeaSubSemanticError(SyntaxError):
+    pass

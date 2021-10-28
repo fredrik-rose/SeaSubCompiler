@@ -19,12 +19,12 @@ def parse(token_stream):
 
     def function_definition(lexer):
         type_specifier = lexer.eat('TYPE_SPECIFIER').value
-        name = identifier(lexer).name
+        name = identifier(lexer)
         lexer.eat('LEFT_PARENTHESIS')
         parameters = parameter_list(lexer)
         lexer.eat('RIGHT_PARENTHESIS')
         body = compound_statement(lexer)
-        node = ast.Function(type_specifier, name, parameters, body)
+        node = ast.Function(name.token, type_specifier, name.name, parameters, body)
         return node
 
     def parameter_list(lexer):
@@ -36,19 +36,19 @@ def parse(token_stream):
 
     def parameter_declaration(lexer):
         type_specifier = lexer.eat('TYPE_SPECIFIER').value
-        name = identifier(lexer).name
-        return ast.Parameter(type_specifier, name)
+        name = identifier(lexer)
+        return ast.Parameter(name.token, type_specifier, name.name)
 
     def compound_statement(lexer):
-        lexer.eat('LEFT_CURLY_BRACKET')
+        token = lexer.eat('LEFT_CURLY_BRACKET')
         if lexer.peek().type == 'RIGHT_CURLY_BRACKET':
-            node = ast.NoOperation()
+            node = ast.NoOperation(token)
         else:
             declarations = []
             if lexer.peek().type == 'TYPE_SPECIFIER':
                 declarations = declaration_list(lexer)
             statements = statement_list(lexer)
-            node = ast.CompoundStatement(declarations, statements)
+            node = ast.CompoundStatement(token, declarations, statements)
         lexer.eat('RIGHT_CURLY_BRACKET')
         return node
 
@@ -59,10 +59,10 @@ def parse(token_stream):
         return declarations
 
     def declaration(lexer):
-        type_specifier = lexer.eat('TYPE_SPECIFIER').value
+        type_specifier = lexer.eat('TYPE_SPECIFIER')
         variable = identifier(lexer).name
         lexer.eat('SEMICOLON')
-        node = ast.Declaration(type_specifier, variable)
+        node = ast.Declaration(type_specifier, type_specifier.value, variable)
         return node
 
     def statement_list(lexer):
@@ -81,21 +81,22 @@ def parse(token_stream):
         return node
 
     def jump_statement(lexer):
-        lexer.eat('RETURN')
+        token = lexer.eat('RETURN')
         value = expression(lexer)
-        node = ast.ReturnStatement(value)
+        node = ast.ReturnStatement(token, value)
         lexer.eat('SEMICOLON')
         return node
 
     def expression_statement(lexer):
         if lexer.peek().type == 'SEMICOLON':
-            node = ast.NoOperation()
+            token = lexer.eat('SEMICOLON')
+            node = ast.NoOperation(token)
         else:
             variable = identifier(lexer).name
-            lexer.eat('ASSIGNMENT')
+            token = lexer.eat('ASSIGNMENT')
             value = expression(lexer)
-            node = ast.Assignment(variable, value)
-        lexer.eat('SEMICOLON')
+            node = ast.Assignment(token, variable, value)
+            lexer.eat('SEMICOLON')
         return node
 
     def expression(lexer):
@@ -105,24 +106,24 @@ def parse(token_stream):
     def additive_expression(lexer):
         node = multiplicative_expression(lexer)
         while lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('+', '-'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR').value
+            operator = lexer.eat('ARITHMETIC_OPERATOR')
             operand = multiplicative_expression(lexer)
-            node = ast.BinaryOperator(operator, node, operand)
+            node = ast.BinaryOperator(operator, operator.value, node, operand)
         return node
 
     def multiplicative_expression(lexer):
         node = unary_expression(lexer)
         while lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('*', '/'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR').value
+            operator = lexer.eat('ARITHMETIC_OPERATOR')
             operand = unary_expression(lexer)
-            node = ast.BinaryOperator(operator, node, operand)
+            node = ast.BinaryOperator(operator, operator.value, node, operand)
         return node
 
     def unary_expression(lexer):
         if lexer.peek().type == 'ARITHMETIC_OPERATOR' and lexer.peek().value in ('+', '-'):
-            operator = lexer.eat('ARITHMETIC_OPERATOR').value
+            operator = lexer.eat('ARITHMETIC_OPERATOR')
             operand = unary_expression(lexer)
-            node = ast.UnaryOperator(operator, operand)
+            node = ast.UnaryOperator(operator, operator.value, operand)
         else:
             node = primary_expression(lexer)
         return node
@@ -139,17 +140,17 @@ def parse(token_stream):
         return node
 
     def identifier(lexer):
-        name = lexer.eat('IDENTIFIER').value
-        node = ast.Identifier(name)
+        name = lexer.eat('IDENTIFIER')
+        node = ast.Identifier(name, name.value)
         return node
 
     def constant(lexer):
         if lexer.peek().type == 'INTEGER_CONSTANT':
-            number = lexer.eat('INTEGER_CONSTANT').value
-            node = ast.IntegerConstant(number)
+            number = lexer.eat('INTEGER_CONSTANT')
+            node = ast.IntegerConstant(number, number.value)
         else:
-            number = lexer.eat('DOUBLE_CONSTANT').value
-            node = ast.RealConstant(number)
+            number = lexer.eat('DOUBLE_CONSTANT')
+            node = ast.RealConstant(number, number.value)
         return node
 
     return translation_unit(_Lexer(token_stream))

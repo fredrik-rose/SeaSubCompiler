@@ -36,6 +36,9 @@ class AbstractSyntaxTreeNode(abc.ABC):
 
 
 class NoOperation(AbstractSyntaxTreeNode):
+    def __init__(self, token):
+        self.token = token
+
     def __repr__(self):
         return "NoOperation()"
 
@@ -47,7 +50,8 @@ class NoOperation(AbstractSyntaxTreeNode):
 
 
 class Function(AbstractSyntaxTreeNode):
-    def __init__(self, type_specifier, identifier, parameters, body):
+    def __init__(self, token, type_specifier, identifier, parameters, body):
+        self.token = token
         self.type_specifier = type_specifier
         self.identifier = identifier
         self.parameters = parameters
@@ -64,7 +68,8 @@ class Function(AbstractSyntaxTreeNode):
 
 
 class Parameter(AbstractSyntaxTreeNode):
-    def __init__(self, type_specifier, identifier):
+    def __init__(self, token, type_specifier, identifier):
+        self.token = token
         self.type_specifier = type_specifier
         self.identifier = identifier
 
@@ -79,7 +84,8 @@ class Parameter(AbstractSyntaxTreeNode):
 
 
 class ReturnStatement(AbstractSyntaxTreeNode):
-    def __init__(self, value):
+    def __init__(self, token, value):
+        self.token = token
         self.value = value
 
     def __repr__(self):
@@ -93,7 +99,8 @@ class ReturnStatement(AbstractSyntaxTreeNode):
 
 
 class CompoundStatement(AbstractSyntaxTreeNode):
-    def __init__(self, declarations, statements):
+    def __init__(self, token, declarations, statements):
+        self.token = token
         self.declarations = declarations
         self.statements = statements
 
@@ -108,7 +115,8 @@ class CompoundStatement(AbstractSyntaxTreeNode):
 
 
 class Declaration(AbstractSyntaxTreeNode):
-    def __init__(self, type_specifier, identifier):
+    def __init__(self, token, type_specifier, identifier):
+        self.token = token
         self.type_specifier = type_specifier
         self.identifier = identifier
 
@@ -123,7 +131,8 @@ class Declaration(AbstractSyntaxTreeNode):
 
 
 class Assignment(AbstractSyntaxTreeNode):
-    def __init__(self, identifier, value):
+    def __init__(self, token, identifier, value):
+        self.token = token
         self.identifier = identifier
         self.value = value
 
@@ -138,7 +147,8 @@ class Assignment(AbstractSyntaxTreeNode):
 
 
 class BinaryOperator(AbstractSyntaxTreeNode):
-    def __init__(self, operator, a, b):
+    def __init__(self, token, operator, a, b):
+        self.token = token
         self.operator = operator
         self.a = a
         self.b = b
@@ -154,7 +164,8 @@ class BinaryOperator(AbstractSyntaxTreeNode):
 
 
 class UnaryOperator(AbstractSyntaxTreeNode):
-    def __init__(self, operator, a):
+    def __init__(self, token, operator, a):
+        self.token = token
         self.operator = operator
         self.a = a
 
@@ -169,7 +180,8 @@ class UnaryOperator(AbstractSyntaxTreeNode):
 
 
 class Identifier(AbstractSyntaxTreeNode):
-    def __init__(self, name):
+    def __init__(self, token, name):
+        self.token = token
         self.name = name
 
     def __repr__(self):
@@ -183,7 +195,8 @@ class Identifier(AbstractSyntaxTreeNode):
 
 
 class IntegerConstant(AbstractSyntaxTreeNode):
-    def __init__(self, value):
+    def __init__(self, token, value):
+        self.token = token
         self.value = value
 
     def __repr__(self):
@@ -197,7 +210,8 @@ class IntegerConstant(AbstractSyntaxTreeNode):
 
 
 class RealConstant(AbstractSyntaxTreeNode):
-    def __init__(self, value):
+    def __init__(self, token, value):
+        self.token = token
         self.value = value
 
     def __repr__(self):

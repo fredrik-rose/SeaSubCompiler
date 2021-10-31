@@ -16,6 +16,22 @@ def add_builtins(symbol_table):
     symbol_table['double'] = BuiltinType('double')
 
 
+def save_graph(symbol_table, file_path):
+    def level(node, connections=[]):
+        symbols = "\\n".join(f'{key}: {str(value)}' for key, value in node.symbols.items())
+        connections.append(f'node{id(node)} [label="{symbols}", shape=box]')
+        for child in node.inner:
+            level(child, connections)
+            connections.append(f"node{id(node)} -> node{id(child)};")
+        return connections
+
+    connections = level(symbol_table)
+    internal = "\n".join(connections)
+    graph = f"digraph symboltable {{\n{internal}\n}}"
+    with open(file_path, 'w') as file:
+        file.write(graph)
+
+
 class SymbolTable:
     def __init__(self, outer=None):
         self._symbols = {}
@@ -25,8 +41,16 @@ class SymbolTable:
             outer._inner.append(self)
 
     @property
+    def symbols(self):
+        return self._symbols
+
+    @property
     def outer(self):
         return self._outer
+
+    @property
+    def inner(self):
+        return self._inner
 
     def __setitem__(self, identifier, symbol):
         self._symbols[identifier] = symbol

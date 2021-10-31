@@ -52,7 +52,7 @@ def run():
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
     symbol_table = st.attach_symbol_table(tree)
-    print(symbol_table)
+    st.save_graph(symbol_table, 'symbol-table.dot')
     sa.analyze_semantics(tree)
     interp = interpreter.Intepreter()
     interp.visit(tree)

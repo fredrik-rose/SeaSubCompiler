@@ -4,6 +4,10 @@ The abstract syntax tree of the sea sub compiler.
 import abc
 
 
+def save_graph(symbol_table, file_path):
+    _Graph().save(symbol_table, file_path)
+
+
 def _get_nodes():
     return (NoOperation, Function, Parameter, ReturnStatement, CompoundStatement, Declaration,
             Assignment, BinaryOperator, UnaryOperator, Identifier, IntegerConstant, RealConstant)
@@ -222,3 +226,53 @@ class RealConstant(AbstractSyntaxTreeNode):
 
     def get_children(self):
         return []
+
+
+class _Graph(NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self.connections = None
+
+    def save(self, abstract_syntax_tree, file_path):
+        self.connections = []
+        self.visit(abstract_syntax_tree)
+        internal = "\n".join(self.connections)
+        graph = f"digraph abstractsyntaxtree {{ {internal} }}"
+        with open(file_path, 'w') as file:
+            file.write(graph)
+
+    def _visit_NoOperation(self, node):
+        self._add_connections(node, "NOP")
+
+    def _visit_ReturnStatement(self, node):
+        self._add_connections(node, "return")
+
+    def _visit_CompoundStatement(self, node):
+        self._add_connections(node, "{ }")
+
+    def _visit_Declaration(self, node):
+        self._add_connections(node, f"{node.type_specifier} {node.identifier}")
+
+    def _visit_Assignment(self, node):
+        self._add_connections(node, f"{node.identifier} = ")
+
+    def _visit_BinaryOperator(self, node):
+        self._add_connections(node, f"{node.operator}")
+
+    def _visit_UnaryOperator(self, node):
+        self._add_connections(node, f"{node.operator}")
+
+    def _visit_Identifier(self, node):
+        self._add_connections(node, f"{node.name}")
+
+    def _visit_IntegerConstant(self, node):
+        self._add_connections(node, f"{node.value}")
+
+    def _visit_RealConstant(self, node):
+        self._add_connections(node, f"{node.value}")
+
+    def _add_connections(self, node, label):
+        self.connections.append(f'node{id(node)} [label="{label}"]')
+        self._generic_visit(node)
+        for child in node.get_children():
+            self.connections.append(f"node{id(node)} -> node{id(child)};")

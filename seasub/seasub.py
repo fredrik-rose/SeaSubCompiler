@@ -1,6 +1,7 @@
 """
 The sea sub compiler.
 """
+from seasub import abstract_syntax_tree as ast
 from seasub import interpreter
 from seasub import lexer
 from seasub import parser
@@ -54,6 +55,7 @@ def run():
     symbol_table = st.attach_symbol_table(tree)
     st.save_graph(symbol_table, 'symbol-table.dot')
     sa.analyze_semantics(tree)
+    ast.save_graph(tree, 'abstract-syntax-tree.dot')
     interp = interpreter.Intepreter()
     interp.visit(tree)
     print(f"Result: {interp.environment}")

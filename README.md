@@ -1,5 +1,7 @@
 # Sea Sub Compiler
 
+<img src="img/seasub.png" width="300"/>
+
 A compiler for a small subset (sub) of the C (sea) programming language.
 
 ## Usage
@@ -118,15 +120,39 @@ The second step of the compiler takes tokens from the lexer as input and outputs
 the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
 language. It is this part of the compiler that implements the grammar as a recursive descent parser.
 
+A core part of the compiler is the node visitor. It provides functionality to traverse an abstract syntax tree by
+implementing the *visitor* design pattern. The sub classes of the node visitor provides a visitor function for
+each relevant node in the abstract syntax tree. The default visitor will be used for nodes that do not have a visitor.
+The Sea sub compiler uses the node visitor heavily, for example:
+
+* Semantic analysis
+* Symbol table creation
+* Visualization
+
 ### Semantic Analyzer
-Verifies the semantic correctness of the program. This includes checking type correctness and that variables are
-declared.
+
+The third step of the compiler verifies the semantic correctness of the program. The abstract syntax tree created by
+the parser is the input and the output is a verified abstract syntax tree. The semantic verification includes type
+correctness and declaration of variables before use.
+
+### Symbol Table
+
+This component is responsible to manage all kinds of symbols in the language, for built-in types, variables and
+functions. To support lexical scopes it is implemented as a tree data structure, were each node corresponds to a scope
+level.
+
+The symbol table is attached to the abstract syntax tree by adding a *symbol table* member to each of the node in the
+abstract syntax tree, referring to the corresponding lexical scope in the symbol table.
 
 ### Error Handler
 
 This component is responsible for the error handling and is used by all parts of the compiler.
 
-### Symbol Table
+## Visualization
 
-This component is responsible to manage all kinds of symbols in the language, for built-in types, variables and
-functions.
+The Sea sub compiler generates .dot graph files containing the abstract syntax tree and the symbol table. These can be
+visualized by using e.g. Graphvis:
+```
+dot -Tpng -o abstract-syntax-tree.png abstract-syntax-tree.dot
+dot -Tpng -o symbol-table.png symbol-table.dot
+```

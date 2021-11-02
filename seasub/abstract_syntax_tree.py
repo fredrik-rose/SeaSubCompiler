@@ -9,8 +9,9 @@ def save_graph(symbol_table, file_path):
 
 
 def _get_nodes():
-    return (NoOperation, Function, Parameter, ReturnStatement, CompoundStatement, Declaration,
-            Assignment, BinaryOperator, UnaryOperator, Identifier, IntegerConstant, RealConstant)
+    return (NoOperation, TranslationUnit, Function, Parameter, ReturnStatement, CompoundStatement,
+            Declaration, Assignment, BinaryOperator, UnaryOperator, Identifier, IntegerConstant,
+            RealConstant)
 
 
 class NodeVisitor:
@@ -51,6 +52,21 @@ class NoOperation(AbstractSyntaxTreeNode):
 
     def get_children(self):
         return []
+
+
+class TranslationUnit(AbstractSyntaxTreeNode):
+    def __init__(self, token, functions):
+        self.token = token
+        self.functions = functions
+
+    def __repr__(self):
+        return f"TranslationUnit({self.functions})"
+
+    def __str__(self):
+        return "\n".join(f"{str(func)}" for func in self.functions)
+
+    def get_children(self):
+        return self.functions
 
 
 class Function(AbstractSyntaxTreeNode):
@@ -243,6 +259,15 @@ class _Graph(NodeVisitor):
 
     def _visit_NoOperation(self, node):
         self._add_connections(node, "NOP")
+
+    def _visit_TranslationUnit(self, node):
+        self._add_connections(node, "Translation unit")
+
+    def _visit_Function(self, node):
+        self._add_connections(node, f"{node.identifier}()")
+
+    def _visit_Parameter(self, node):
+        self._add_connections(node, f"{node.type_specifier} {node.identifier}")
 
     def _visit_ReturnStatement(self, node):
         self._add_connections(node, "return")

@@ -97,6 +97,31 @@ class BuiltinType(Symbol):
         return f'BuiltinType<{self.name}>'
 
 
+class Function(Symbol):
+    def __init__(self, name, return_type, parameters):
+        super().__init__(name)
+        self.type = return_type
+        self.parameters = parameters
+
+    def __repr__(self):
+        return f"Function({self.name}, {self.type}, {self.parameters})"
+
+    def __str__(self):
+        return f"Function<{self.name}({', '.join(str(param) for param in self.parameters)}): {self.type}>"
+
+
+class Parameter(Symbol):
+    def __init__(self, name, parameter_type):
+        super().__init__(name)
+        self.type = parameter_type
+
+    def __repr__(self):
+        return f"Parameter({self.name}, {self.type})"
+
+    def __str__(self):
+        return f"Parameter<{self.name}: {self.type}>"
+
+
 class Variable(Symbol):
     def __init__(self, name, symbol_type):
         super().__init__(name)
@@ -120,6 +145,23 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         assert self.current_scope == global_scope
 
     def _visit_NoOperation(self, node):
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+
+    def _visit_TranslationUnit(self, node):
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+
+    def _visit_Function(self, node):
+        self.current_scope = SymbolTable(self.current_scope)
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+        parameters = [self.current_scope[param.identifier] for param in node.parameters]
+        self.current_scope = self.current_scope.outer
+        self.current_scope[node.identifier] = Function(node.identifier, node.type_specifier, parameters)
+
+    def _visit_Parameter(self, node):
+        self.current_scope[node.identifier] = Parameter(node.identifier, node.type_specifier)
         self._generic_visit(node)
         self._add_symbol_table(node)
 

@@ -7,8 +7,9 @@ from seasub import error_handler as err
 
 def parse(token_stream):
     def translation_unit(lexer):
-        node = function_definition_list(lexer)
-        lexer.eat('EOF')
+        functions = function_definition_list(lexer)
+        token = lexer.eat('EOF')
+        node = ast.TranslationUnit(token, functions)
         return node
 
     def function_definition_list(lexer):

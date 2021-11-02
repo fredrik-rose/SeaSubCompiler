@@ -46,10 +46,19 @@ def run():
 
         return d + 11;
     }
+
+    double add(double a, double b)
+    {
+        double z;
+
+        z = a + b;
+
+        return z;
+    }
     '''
     print(f"Statements: {statements}")
     token_stream = lexer.tokenize(statements)
-    tree = parser.parse(token_stream)[0]  # TODO: Remove [0]
+    tree = parser.parse(token_stream)
     print(f"Parse tree:\n{repr(tree)}\n")
     print(f"Statement(s):\n{tree}\n")
     symbol_table = st.attach_symbol_table(tree)

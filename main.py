@@ -9,7 +9,7 @@ from seasub import seasub
 def main():
     parser = argparse.ArgumentParser("A compiler for the Sea Sub (C subset) language.")
     parser.parse_args()
-    seasub.run()
+    seasub.compile("demo.c")
 
 
 if __name__ == "__main__":

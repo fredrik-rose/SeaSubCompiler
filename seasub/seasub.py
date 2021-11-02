@@ -10,7 +10,7 @@ from seasub import symbol_table as st
 
 
 def run(file_path, ast_graph_path=None, symbol_table_graph_path=None):
-    with open(file_path) as file:
+    with open(file_path, 'r') as file:
         source_code = file.read()
     token_stream = lexer.tokenize(source_code)
     abstract_syntax_tree = parser.parse(token_stream)

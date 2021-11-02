@@ -8,10 +8,19 @@ A compiler for a small subset (sub) of the C (sea) programming language.
 
 Stand in the root if the SeaSubCompiler directory and run:
 ```
-python main.py
+python main.py --ast abstract-syntax-tree.dot --symbol-table symbol-table.dot demo.c
 ```
 
 Currently only runs a toy example.
+
+### Visualization
+
+The Sea sub compiler can generate .dot graph files containing the abstract syntax tree and the symbol table. These can
+be visualized by using e.g. Graphvis:
+```
+dot -Tpng -o abstract-syntax-tree.png abstract-syntax-tree.dot
+dot -Tpng -o symbol-table.png symbol-table.dot
+```
 
 ## Grammar
 
@@ -148,11 +157,3 @@ abstract syntax tree, referring to the corresponding lexical scope in the symbol
 
 This component is responsible for the error handling and is used by all parts of the compiler.
 
-## Visualization
-
-The Sea sub compiler generates .dot graph files containing the abstract syntax tree and the symbol table. These can be
-visualized by using e.g. Graphvis:
-```
-dot -Tpng -o abstract-syntax-tree.png abstract-syntax-tree.dot
-dot -Tpng -o symbol-table.png symbol-table.dot
-```

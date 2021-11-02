@@ -247,12 +247,12 @@ class RealConstant(AbstractSyntaxTreeNode):
 class _Graph(NodeVisitor):
     def __init__(self):
         super().__init__()
-        self.connections = None
+        self._connections = None
 
     def save(self, abstract_syntax_tree, file_path):
-        self.connections = []
+        self._connections = []
         self.visit(abstract_syntax_tree)
-        internal = "\n".join(self.connections)
+        internal = "\n".join(self._connections)
         graph = f"digraph abstractsyntaxtree {{ {internal} }}"
         with open(file_path, 'w') as file:
             file.write(graph)
@@ -297,7 +297,7 @@ class _Graph(NodeVisitor):
         self._add_connections(node, f"{node.value}")
 
     def _add_connections(self, node, label):
-        self.connections.append(f'node{id(node)} [label="{label}"]')
+        self._connections.append(f'node{id(node)} [label="{label}"]')
         self._generic_visit(node)
         for child in node.get_children():
-            self.connections.append(f"node{id(node)} -> node{id(child)};")
+            self._connections.append(f"node{id(node)} -> node{id(child)};")

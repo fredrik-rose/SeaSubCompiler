@@ -36,7 +36,7 @@ def save_graph(symbol_table, file_path):
 
 class SymbolTable:
     def __init__(self, name='global', outer=None):
-        self.name = name
+        self._name = name
         self._symbols = {}
         self._outer = outer
         self._inner = []
@@ -45,18 +45,6 @@ class SymbolTable:
             outer._inner.append(self)
         else:
             self.level = 0
-
-    @property
-    def symbols(self):
-        return self._symbols
-
-    @property
-    def outer(self):
-        return self._outer
-
-    @property
-    def inner(self):
-        return self._inner
 
     def __setitem__(self, identifier, symbol):
         self._symbols[identifier] = symbol
@@ -75,19 +63,39 @@ class SymbolTable:
     def __str__(self):
         symbols = ", ".join(str(symbol) for symbol in self._symbols.values())
         children = "".join(str(child) for child in self.inner) if self.inner else ""
-        output = f"{self.name}L{self.level}: {symbols}\n{children}"
+        output = f"{self._name}L{self.level}: {symbols}\n{children}"
         return output
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def symbols(self):
+        return self._symbols
+
+    @property
+    def outer(self):
+        return self._outer
+
+    @property
+    def inner(self):
+        return self._inner
 
 
 class Symbol:
     def __init__(self, name):
-        self.name = name
+        self._name = name
 
     def __repr__(self):
-        return f'Symbol({self.name})'
+        return f'Symbol({self._name})'
 
     def __str__(self):
-        return f'Symbol<{self.name}>'
+        return f'Symbol<{self._name}>'
+
+    @property
+    def name(self):
+        return self._name
 
 
 class BuiltinType(Symbol):
@@ -101,49 +109,65 @@ class BuiltinType(Symbol):
 class Function(Symbol):
     def __init__(self, name, return_type, parameters):
         super().__init__(name)
-        self.type = return_type
-        self.parameters = parameters
+        self._type = return_type
+        self._parameters = parameters
 
     def __repr__(self):
-        return f"Function({self.name}, {self.type}, {self.parameters})"
+        return f"Function({self.name}, {self._type}, {self._parameters})"
 
     def __str__(self):
-        return f"Function<{self.name}({', '.join(str(param) for param in self.parameters)}): {self.type}>"
+        return f"Function<{self.name}({', '.join(str(param) for param in self._parameters)}): {self._type}>"
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def parameters(self):
+        return self._parameters
 
 
 class Parameter(Symbol):
     def __init__(self, name, parameter_type):
         super().__init__(name)
-        self.type = parameter_type
+        self._type = parameter_type
 
     def __repr__(self):
-        return f"Parameter({self.name}, {self.type})"
+        return f"Parameter({self.name}, {self._type})"
 
     def __str__(self):
-        return f"Parameter<{self.name}: {self.type}>"
+        return f"Parameter<{self.name}: {self._type}>"
+
+    @property
+    def type(self):
+        return self._type
 
 
 class Variable(Symbol):
     def __init__(self, name, symbol_type):
         super().__init__(name)
-        self.type = symbol_type
+        self._type = symbol_type
 
     def __repr__(self):
-        return f"Variable({self.name}, {self.type})"
+        return f"Variable({self.name}, {self._type})"
 
     def __str__(self):
-        return f"Variable<{self.name}: {self.type}>"
+        return f"Variable<{self.name}: {self._type}>"
+
+    @property
+    def type(self):
+        return self._type
 
 
 class _SymbolTableVisitor(ast.NodeVisitor):
     def __init__(self):
         super().__init__()
-        self.current_scope = None
+        self._current_scope = None
 
     def attach(self, tree, global_scope):
-        self.current_scope = global_scope
+        self._current_scope = global_scope
         self.visit(tree)
-        assert self.current_scope == global_scope
+        assert self._current_scope == global_scope
 
     def _visit_NoOperation(self, node):
         self._generic_visit(node)
@@ -154,15 +178,15 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._add_symbol_table(node)
 
     def _visit_Function(self, node):
-        self.current_scope = SymbolTable(node.identifier, self.current_scope)
+        self._current_scope = SymbolTable(node.identifier, self._current_scope)
         self._generic_visit(node)
         self._add_symbol_table(node)
-        parameters = [self.current_scope[param.identifier] for param in node.parameters]
-        self.current_scope = self.current_scope.outer
-        self.current_scope[node.identifier] = Function(node.identifier, node.type_specifier, parameters)
+        parameters = [self._current_scope[param.identifier] for param in node.parameters]
+        self._current_scope = self._current_scope.outer
+        self._current_scope[node.identifier] = Function(node.identifier, node.type_specifier, parameters)
 
     def _visit_Parameter(self, node):
-        self.current_scope[node.identifier] = Parameter(node.identifier, node.type_specifier)
+        self._current_scope[node.identifier] = Parameter(node.identifier, node.type_specifier)
         self._generic_visit(node)
         self._add_symbol_table(node)
 
@@ -171,13 +195,13 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._add_symbol_table(node)
 
     def _visit_CompoundStatement(self, node):
-        self.current_scope = SymbolTable(self.current_scope.name, self.current_scope)
+        self._current_scope = SymbolTable(self._current_scope.name, self._current_scope)
         self._generic_visit(node)
         self._add_symbol_table(node)
-        self.current_scope = self.current_scope.outer
+        self._current_scope = self._current_scope.outer
 
     def _visit_Declaration(self, node):
-        self.current_scope[node.identifier] = Variable(node.identifier, node.type_specifier)
+        self._current_scope[node.identifier] = Variable(node.identifier, node.type_specifier)
         self._generic_visit(node)
         self._add_symbol_table(node)
 
@@ -206,4 +230,4 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._add_symbol_table(node)
 
     def _add_symbol_table(self, node):
-        node.symbol_table = self.current_scope
+        node.symbol_table = self._current_scope

@@ -159,6 +159,7 @@ def parse(token_stream):
 
 class _Lexer:
     def __init__(self, token_stream):
+        self._current = None
         self._token_stream = token_stream
         self._advance()
 

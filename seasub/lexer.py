@@ -52,13 +52,29 @@ def tokenize(text):
 
 class Token:
     def __init__(self, token_type, value, line, column):
-        self.type = token_type
-        self.value = value
-        self.line = line
-        self.column = column
+        self._type = token_type
+        self._value = value
+        self._line = line
+        self._column = column
 
     def __repr__(self):
-        return f"Token({self.type}, {self.value}, {self.line}, {self.column})"
+        return f"Token({self._type}, {self._value}, {self._line}, {self._column})"
 
     def __str__(self):
-        return "<{}, {}>".format(self.type, self.value)
+        return "<{}, {}>".format(self._type, self._value)
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def line(self):
+        return self._line
+
+    @property
+    def column(self):
+        return self._column

@@ -8,18 +8,18 @@ from seasub import parser
 from seasub import semantic_analyzer as sa
 from seasub import symbol_table as st
 
-def compile(file_path):
+
+def compile(file_path, ast_graph_path=None, symbol_table_graph_path=None):
     with open(file_path) as file:
         source_code = file.read()
-    print(f"Source code: {source_code}")
     token_stream = lexer.tokenize(source_code)
-    tree = parser.parse(token_stream)
-    print(f"Parse tree:\n{repr(tree)}\n")
-    print(f"Statement(s):\n{tree}\n")
-    symbol_table = st.attach_symbol_table(tree)
-    st.save_graph(symbol_table, 'symbol-table.dot')
-    sa.analyze_semantics(tree)
-    ast.save_graph(tree, 'abstract-syntax-tree.dot')
+    abstract_syntax_tree = parser.parse(token_stream)
+    symbol_table = st.attach_symbol_table(abstract_syntax_tree)
+    sa.analyze_semantics(abstract_syntax_tree)
+    if ast_graph_path:
+        ast.save_graph(abstract_syntax_tree, ast_graph_path)
+    if symbol_table_graph_path:
+        st.save_graph(symbol_table, symbol_table_graph_path)
     interp = interpreter.Intepreter()
-    interp.visit(tree)
+    interp.visit(abstract_syntax_tree)
     print(f"Result: {interp.environment}")

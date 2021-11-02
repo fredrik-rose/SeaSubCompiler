@@ -18,8 +18,10 @@ def add_builtins(symbol_table):
 
 def save_graph(symbol_table, file_path):
     def level(node, connections=[]):
+        name = f"===== {node.name} L{node.level} ====="
         symbols = "\\n".join(f'{key}: {str(value)}' for key, value in node.symbols.items())
-        connections.append(f'node{id(node)} [label="{symbols}", shape=box]')
+        label = f"{name}\\n{symbols}"
+        connections.append(f'node{id(node)} [label="{label}", shape=box]')
         for child in node.inner:
             level(child, connections)
             connections.append(f"node{id(node)} -> node{id(child)};")
@@ -33,12 +35,16 @@ def save_graph(symbol_table, file_path):
 
 
 class SymbolTable:
-    def __init__(self, outer=None):
+    def __init__(self, name='global', outer=None):
+        self.name = name
         self._symbols = {}
         self._outer = outer
         self._inner = []
         if outer is not None:
+            self.level = outer.level + 1
             outer._inner.append(self)
+        else:
+            self.level = 0
 
     @property
     def symbols(self):
@@ -64,17 +70,12 @@ class SymbolTable:
             raise KeyError(f"Identifier '{identifier}' not found in symbol table")
 
     def __repr__(self):
-        return 'SymbolTable()'
+        return "SymbolTable()"
 
     def __str__(self):
-        if self._outer is not None:
-            return str(self._outer)
-        return f'----- SYMBOL TABLE -----\n{self._str()}'
-
-    def _str(self, level=0):
-        symbols = ', '.join(str(symbol) for symbol in self._symbols.values())
-        children = ''.join(child._str(level + 1) for child in self._inner)
-        output = f'L{level}: {symbols}\n{children}'
+        symbols = ", ".join(str(symbol) for symbol in self._symbols.values())
+        children = "".join(str(child) for child in self.inner) if self.inner else ""
+        output = f"{self.name}L{self.level}: {symbols}\n{children}"
         return output
 
 
@@ -153,7 +154,7 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._add_symbol_table(node)
 
     def _visit_Function(self, node):
-        self.current_scope = SymbolTable(self.current_scope)
+        self.current_scope = SymbolTable(node.identifier, self.current_scope)
         self._generic_visit(node)
         self._add_symbol_table(node)
         parameters = [self.current_scope[param.identifier] for param in node.parameters]
@@ -170,7 +171,7 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._add_symbol_table(node)
 
     def _visit_CompoundStatement(self, node):
-        self.current_scope = SymbolTable(self.current_scope)
+        self.current_scope = SymbolTable(self.current_scope.name, self.current_scope)
         self._generic_visit(node)
         self._add_symbol_table(node)
         self.current_scope = self.current_scope.outer

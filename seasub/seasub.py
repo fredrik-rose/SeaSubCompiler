@@ -9,7 +9,7 @@ from seasub import semantic_analyzer as sa
 from seasub import symbol_table as st
 
 
-def compile(file_path, ast_graph_path=None, symbol_table_graph_path=None):
+def run(file_path, ast_graph_path=None, symbol_table_graph_path=None):
     with open(file_path) as file:
         source_code = file.read()
     token_stream = lexer.tokenize(source_code)

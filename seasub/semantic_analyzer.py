@@ -23,8 +23,8 @@ class _SemanticAnalyzerDeclaredIdentifiers(ast.NodeVisitor):
     def _verify_identifier_declared(identifier, symbol_table, line, column):
         try:
             symbol_table[identifier]
-        except KeyError as key_error:
-            raise err.SeaSubSemanticError(f"{identifier} is not declared at {line}:{column}") from key_error
+        except KeyError as error:
+            raise err.SeaSubSemanticError(f"Undeclared identifier '{identifier}' on line {line}:{column}") from error
 
 
 class _SemanticAnalyzerTypes(ast.NodeVisitor):
@@ -32,15 +32,15 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
         identifier_type = node.symbol_table[node.identifier].type
         value_type = self.visit(node.value)
         if identifier_type != value_type:
-            raise err.SeaSubSemanticError((f"Assigning value of type {value_type} to variable of type {identifier_type}"
-                                           f" at {node.token.line}:{node.token.column}"))
+            raise err.SeaSubSemanticError((f"Assigning value of type '{value_type}'' to variable of type "
+                                           f"'{identifier_type}' on line {node.token.line}:{node.token.column}"))
 
     def _visit_BinaryOperator(self, node):
         a_type = self.visit(node.a)
         b_type = self.visit(node.b)
         if a_type != b_type:
-            raise err.SeaSubSemanticError((f"Applying binary operator with incompatible types {a_type} and {b_type}"
-                                           f" at {node.token.line}:{node.token.column}"))
+            raise err.SeaSubSemanticError((f"Applying binary operator '{node.operator}' with incompatible types "
+                                           f"'{a_type}' and '{b_type}' on line {node.token.line}:{node.token.column}"))
         return a_type
 
     def _visit_UnaryOperator(self, node):

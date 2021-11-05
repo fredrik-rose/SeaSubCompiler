@@ -8,7 +8,7 @@ A compiler for a small subset (sub) of the C (sea) programming language.
 
 Stand in the root if the SeaSubCompiler directory and run:
 ```
-python main.py --ast abstract-syntax-tree.dot --symbol-table symbol-table.dot demo.c
+python main.py -o 1 --ast abstract-syntax-tree.dot --symbol-table symbol-table.dot demo.c
 ```
 
 Currently only runs a toy example.
@@ -143,6 +143,12 @@ The Sea sub compiler uses the node visitor heavily, for example:
 The third step of the compiler verifies the semantic correctness of the program. The abstract syntax tree created by
 the parser is the input and the output is a verified abstract syntax tree. The semantic verification includes type
 correctness and declaration of variables before use.
+
+### Optimizer
+
+The fourth step of the compiler performs optimizations on the abstract syntax tree. The output is a modified abstract
+syntax tree. Currently only constant folding is implemented. Optimization is probably the most important part of a
+compiler and it can be performed in several of the compilation stages.
 
 ### Symbol Table
 

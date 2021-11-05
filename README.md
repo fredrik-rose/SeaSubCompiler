@@ -117,6 +117,8 @@ constant ->
 
 This section describes the architecture of the sea sub compiler.
 
+<img src="img/architecture.png" width="1000"/>
+
 ### Lexer
 
 The lexical analyzer (also known as scanner or tokenizer). This is the first step of the compiler that takes the raw

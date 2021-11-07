@@ -28,6 +28,15 @@ class _SemanticAnalyzerDeclaredIdentifiers(ast.NodeVisitor):
 
 
 class _SemanticAnalyzerTypes(ast.NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self.current_function = None
+
+    def _visit_Function(self, node):
+        self.current_function = node.symbol_table[node.identifier]
+        self._generic_visit(node)
+        self.current_function = None
+
     def _visit_FunctionCall(self, node):
         parameters = node.symbol_table[node.identifier.name].parameters
         num_arguments = len(node.arguments)
@@ -43,6 +52,13 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
                                                f"parameter {i + 1}, expected '{param.type}' got '{arg_type}', "
                                                f"on line {arg.token.line}:{arg.token.column}"))
         return self.visit(node.identifier)
+
+    def _visit_ReturnStatement(self, node):
+        return_type = self.visit(node.value)
+        if return_type != self.current_function.type:
+            raise err.SeaSubSemanticError((f"Invalid return type for function '{self.current_function.name}', "
+                                           f"expected '{self.current_function.type}' got '{return_type}', "
+                                           f"on line {node.value.token.line}:{node.value.token.column}"))
 
     def _visit_Assignment(self, node):
         identifier_type = node.symbol_table[node.identifier].type

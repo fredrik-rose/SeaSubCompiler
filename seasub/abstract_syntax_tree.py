@@ -37,8 +37,20 @@ class NodeVisitor:
 class AbstractSyntaxTreeNode(abc.ABC):
     @abc.abstractmethod
     def __init__(self, token):
-        self.token = token
-        self.symbol_table = None
+        self._token = token
+        self._symbol_table = None
+
+    @property
+    def token(self):
+        return self._token
+
+    @property
+    def symbol_table(self):
+        return self._symbol_table
+
+    @symbol_table.setter
+    def symbol_table(self, value):
+        self._symbol_table = value
 
     @abc.abstractmethod
     def get_children(self):
@@ -62,47 +74,67 @@ class NoOperation(AbstractSyntaxTreeNode):
 class TranslationUnit(AbstractSyntaxTreeNode):
     def __init__(self, token, functions):
         super().__init__(token)
-        self.functions = functions
+        self._functions = functions
 
     def __repr__(self):
-        return f"TranslationUnit({self.functions})"
+        return f"TranslationUnit({self._functions})"
 
     def __str__(self):
-        return "\n".join(f"{str(func)}" for func in self.functions)
+        return "\n".join(f"{str(func)}" for func in self._functions)
 
     def get_children(self):
-        return self.functions
+        return self._functions
 
 
 class FunctionDefinition(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier, parameters, body):
         super().__init__(token)
-        self.type_specifier = type_specifier
-        self.identifier = identifier
-        self.parameters = parameters
-        self.body = body
+        self._type_specifier = type_specifier
+        self._identifier = identifier
+        self._parameters = parameters
+        self._body = body
+
+    @property
+    def type_specifier(self):
+        return self._type_specifier
+
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @property
+    def parameters(self):
+        return self._parameters
 
     def __repr__(self):
-        return f"FunctionDefinition({self.type_specifier}, {self.identifier}, {self.parameters}, <body>)"
+        return f"FunctionDefinition({self._type_specifier}, {self._identifier}, {self._parameters}, <body>)"
 
     def __str__(self):
-        return f"{self.type_specifier} {self.identifier} ({self.parameters})\n{self.body}"
+        return f"{self._type_specifier} {self._identifier} ({self._parameters})\n{self._body}"
 
     def get_children(self):
-        return self.parameters + [self.body]
+        return self._parameters + [self._body]
 
 
 class Parameter(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier):
         super().__init__(token)
-        self.type_specifier = type_specifier
-        self.identifier = identifier
+        self._type_specifier = type_specifier
+        self._identifier = identifier
+
+    @property
+    def type_specifier(self):
+        return self._type_specifier
+
+    @property
+    def identifier(self):
+        return self._identifier
 
     def __repr__(self):
-        return f"Parameter({self.type_specifier}, {self.identifier})"
+        return f"Parameter({self._type_specifier}, {self._identifier})"
 
     def __str__(self):
-        return f"{str(self.type_specifier)} {str(self.identifier)}"
+        return f"{str(self._type_specifier)} {str(self._identifier)}"
 
     def get_children(self):
         return []
@@ -111,61 +143,89 @@ class Parameter(AbstractSyntaxTreeNode):
 class FunctionCall(AbstractSyntaxTreeNode):
     def __init__(self, token, identifier, arguments):
         super().__init__(token)
-        self.identifier = identifier
-        self.arguments = arguments
+        self._identifier = identifier
+        self._arguments = arguments
+
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @property
+    def arguments(self):
+        return self._arguments
+
+    @arguments.setter
+    def arguments(self, value):
+        self._arguments = value
 
     def __repr__(self):
-        return f"FunctionCall({self.identifier}, {self.arguments})"
+        return f"FunctionCall({self._identifier}, {self._arguments})"
 
     def __str__(self):
-        return f"{str(self.identifier)} ({self.arguments})"
+        return f"{str(self._identifier)} ({self._arguments})"
 
     def get_children(self):
-        return [self.identifier] + self.arguments
+        return [self._identifier] + self._arguments
 
 
 class ReturnStatement(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
         super().__init__(token)
-        self.value = value
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
 
     def __repr__(self):
-        return f"Return({repr(self.value)})"
+        return f"Return({repr(self._value)})"
 
     def __str__(self):
-        return f"return {self.value}"
+        return f"return {self._value}"
 
     def get_children(self):
-        return [self.value]
+        return [self._value]
 
 
 class CompoundStatement(AbstractSyntaxTreeNode):
     def __init__(self, token, declarations, statements):
         super().__init__(token)
-        self.declarations = declarations
-        self.statements = statements
+        self._declarations = declarations
+        self._statements = statements
 
     def __repr__(self):
-        return f"CompoundStatement({self.declarations}, {self.statements})"
+        return f"CompoundStatement({self._declarations}, {self._statements})"
 
     def __str__(self):
-        return "\n".join(f"{str(item)}" for item in self.declarations + self.statements)
+        return "\n".join(f"{str(item)}" for item in self._declarations + self._statements)
 
     def get_children(self):
-        return self.declarations + self.statements
+        return self._declarations + self._statements
 
 
 class Declaration(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier):
         super().__init__(token)
-        self.type_specifier = type_specifier
-        self.identifier = identifier
+        self._type_specifier = type_specifier
+        self._identifier = identifier
+
+    @property
+    def type_specifier(self):
+        return self._type_specifier
+
+    @property
+    def identifier(self):
+        return self._identifier
 
     def __repr__(self):
-        return f"Declaration({self.type_specifier}, {self.identifier})"
+        return f"Declaration({self._type_specifier}, {self._identifier})"
 
     def __str__(self):
-        return f"{str(self.type_specifier)} {str(self.identifier)}"
+        return f"{str(self._type_specifier)} {str(self._identifier)}"
 
     def get_children(self):
         return []
@@ -174,62 +234,98 @@ class Declaration(AbstractSyntaxTreeNode):
 class Assignment(AbstractSyntaxTreeNode):
     def __init__(self, token, identifier, value):
         super().__init__(token)
-        self.identifier = identifier
-        self.value = value
+        self._identifier = identifier
+        self._value = value
+
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
 
     def __repr__(self):
-        return f"Assignment({repr(self.identifier)}, {repr(self.value)})"
+        return f"Assignment({repr(self._identifier)}, {repr(self._value)})"
 
     def __str__(self):
-        return f"{self.identifier} = {self.value}"
+        return f"{self._identifier} = {self._value}"
 
     def get_children(self):
-        return [self.value]
+        return [self._value]
 
 
 class BinaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, token, operator, a, b):
         super().__init__(token)
-        self.operator = operator
-        self.a = a
-        self.b = b
+        self._operator = operator
+        self._a = a
+        self._b = b
+
+    @property
+    def operator(self):
+        return self._operator
+
+    @property
+    def a(self):
+        return self._a
+
+    @property
+    def b(self):
+        return self._b
 
     def __repr__(self):
-        return f"BinaryOperator({repr(self.operator)}, {repr(self.a)}, {repr(self.b)})"
+        return f"BinaryOperator({repr(self._operator)}, {repr(self._a)}, {repr(self._b)})"
 
     def __str__(self):
-        return f"({self.a} {self.operator} {self.b})"
+        return f"({self._a} {self._operator} {self._b})"
 
     def get_children(self):
-        return [self.a, self.b]
+        return [self._a, self._b]
 
 
 class UnaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, token, operator, a):
         super().__init__(token)
-        self.operator = operator
-        self.a = a
+        self._operator = operator
+        self._a = a
+
+    @property
+    def operator(self):
+        return self._operator
+
+    @property
+    def a(self):
+        return self._a
 
     def __repr__(self):
-        return f"UnaryOperator({repr(self.operator)}, {repr(self.a)})"
+        return f"UnaryOperator({repr(self._operator)}, {repr(self._a)})"
 
     def __str__(self):
-        return f"({self.operator}{self.a})"
+        return f"({self._operator}{self._a})"
 
     def get_children(self):
-        return [self.a]
+        return [self._a]
 
 
 class Identifier(AbstractSyntaxTreeNode):
     def __init__(self, token, name):
         super().__init__(token)
-        self.name = name
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
 
     def __repr__(self):
-        return f"Identifier({repr(self.name)})"
+        return f"Identifier({repr(self._name)})"
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self._name}"
 
     def get_children(self):
         return []
@@ -238,13 +334,21 @@ class Identifier(AbstractSyntaxTreeNode):
 class IntegerConstant(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
         super().__init__(token)
-        self.value = value
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
 
     def __repr__(self):
-        return f"IntegerConstant({repr(self.value)})"
+        return f"IntegerConstant({repr(self._value)})"
 
     def __str__(self):
-        return str(self.value)
+        return str(self._value)
 
     def get_children(self):
         return []
@@ -253,13 +357,21 @@ class IntegerConstant(AbstractSyntaxTreeNode):
 class RealConstant(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
         super().__init__(token)
-        self.value = value
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
 
     def __repr__(self):
-        return f"RealConstant({repr(self.value)})"
+        return f"RealConstant({repr(self._value)})"
 
     def __str__(self):
-        return str(self.value)
+        return str(self._value)
 
     def get_children(self):
         return []

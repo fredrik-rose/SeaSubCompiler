@@ -3,6 +3,7 @@ The semantic analyzer of the sea sub compiler.
 """
 from seasub import abstract_syntax_tree as ast
 from seasub import error_handler as err
+from seasub import symbol_table as symtab
 
 
 def analyze_semantics(abstract_syntax_tree):
@@ -38,7 +39,11 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
         self._current_function = None
 
     def _visit_FunctionCall(self, node):
-        parameters = node.symbol_table[node.identifier.name].parameters
+        function = node.symbol_table[node.identifier.name]
+        if type(function) != symtab.Function:
+            raise err.SeaSubSemanticError((f"Called object '{node.identifier.name}' is not a function "
+                                           f"on line {node.token.line}:{node.token.column}"))
+        parameters = function.parameters
         num_arguments = len(node.arguments)
         num_parameters = len(parameters)
         if num_arguments != num_parameters:
@@ -61,7 +66,11 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
                                            f"on line {node.value.token.line}:{node.value.token.column}"))
 
     def _visit_Assignment(self, node):
-        identifier_type = node.symbol_table[node.identifier].type
+        identifier = node.symbol_table[node.identifier]
+        if type(identifier) != symtab.Variable:
+            raise err.SeaSubSemanticError((f"Assigning to an object that is not a variable "
+                                           f"on line {node.token.line}:{node.token.column}"))
+        identifier_type = identifier.type
         value_type = self.visit(node.value)
         if identifier_type != value_type:
             raise err.SeaSubSemanticError((f"Assigning value of type '{value_type}'' to variable of type "

@@ -12,6 +12,21 @@ def analyze_semantics(abstract_syntax_tree):
 
 
 class _SemanticAnalyzerDeclaredIdentifiers(ast.NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self._has_main = None
+
+    def _visit_TranslationUnit(self, node):
+        self._has_main = False
+        self._generic_visit(node)
+        if not self._has_main:
+            raise err.SeaSubSemanticError("Definition of 'main' function is missing")
+
+    def _visit_FunctionDefinition(self, node):
+        if node.identifier == 'main':
+            self._has_main = True
+        self._generic_visit(node)
+
     def _visit_Assignment(self, node):
         self._verify_identifier_declared(node.identifier, node.symbol_table, node.token.line, node.token.column)
         self._generic_visit(node)

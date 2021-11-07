@@ -36,13 +36,18 @@ class NodeVisitor:
 
 class AbstractSyntaxTreeNode(abc.ABC):
     @abc.abstractmethod
+    def __init__(self, token):
+        self.token = token
+        self.symbol_table = None
+
+    @abc.abstractmethod
     def get_children(self):
         ...
 
 
 class NoOperation(AbstractSyntaxTreeNode):
     def __init__(self, token):
-        self.token = token
+        super().__init__(token)
 
     def __repr__(self):
         return "NoOperation()"
@@ -56,7 +61,7 @@ class NoOperation(AbstractSyntaxTreeNode):
 
 class TranslationUnit(AbstractSyntaxTreeNode):
     def __init__(self, token, functions):
-        self.token = token
+        super().__init__(token)
         self.functions = functions
 
     def __repr__(self):
@@ -71,7 +76,7 @@ class TranslationUnit(AbstractSyntaxTreeNode):
 
 class FunctionDefinition(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier, parameters, body):
-        self.token = token
+        super().__init__(token)
         self.type_specifier = type_specifier
         self.identifier = identifier
         self.parameters = parameters
@@ -89,7 +94,7 @@ class FunctionDefinition(AbstractSyntaxTreeNode):
 
 class Parameter(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier):
-        self.token = token
+        super().__init__(token)
         self.type_specifier = type_specifier
         self.identifier = identifier
 
@@ -105,7 +110,7 @@ class Parameter(AbstractSyntaxTreeNode):
 
 class FunctionCall(AbstractSyntaxTreeNode):
     def __init__(self, token, identifier, arguments):
-        self.token = token
+        super().__init__(token)
         self.identifier = identifier
         self.arguments = arguments
 
@@ -121,7 +126,7 @@ class FunctionCall(AbstractSyntaxTreeNode):
 
 class ReturnStatement(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
-        self.token = token
+        super().__init__(token)
         self.value = value
 
     def __repr__(self):
@@ -136,7 +141,7 @@ class ReturnStatement(AbstractSyntaxTreeNode):
 
 class CompoundStatement(AbstractSyntaxTreeNode):
     def __init__(self, token, declarations, statements):
-        self.token = token
+        super().__init__(token)
         self.declarations = declarations
         self.statements = statements
 
@@ -152,7 +157,7 @@ class CompoundStatement(AbstractSyntaxTreeNode):
 
 class Declaration(AbstractSyntaxTreeNode):
     def __init__(self, token, type_specifier, identifier):
-        self.token = token
+        super().__init__(token)
         self.type_specifier = type_specifier
         self.identifier = identifier
 
@@ -168,7 +173,7 @@ class Declaration(AbstractSyntaxTreeNode):
 
 class Assignment(AbstractSyntaxTreeNode):
     def __init__(self, token, identifier, value):
-        self.token = token
+        super().__init__(token)
         self.identifier = identifier
         self.value = value
 
@@ -184,7 +189,7 @@ class Assignment(AbstractSyntaxTreeNode):
 
 class BinaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, token, operator, a, b):
-        self.token = token
+        super().__init__(token)
         self.operator = operator
         self.a = a
         self.b = b
@@ -201,7 +206,7 @@ class BinaryOperator(AbstractSyntaxTreeNode):
 
 class UnaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, token, operator, a):
-        self.token = token
+        super().__init__(token)
         self.operator = operator
         self.a = a
 
@@ -217,7 +222,7 @@ class UnaryOperator(AbstractSyntaxTreeNode):
 
 class Identifier(AbstractSyntaxTreeNode):
     def __init__(self, token, name):
-        self.token = token
+        super().__init__(token)
         self.name = name
 
     def __repr__(self):
@@ -232,7 +237,7 @@ class Identifier(AbstractSyntaxTreeNode):
 
 class IntegerConstant(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
-        self.token = token
+        super().__init__(token)
         self.value = value
 
     def __repr__(self):
@@ -247,7 +252,7 @@ class IntegerConstant(AbstractSyntaxTreeNode):
 
 class RealConstant(AbstractSyntaxTreeNode):
     def __init__(self, token, value):
-        self.token = token
+        super().__init__(token)
         self.value = value
 
     def __repr__(self):

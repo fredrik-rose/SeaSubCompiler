@@ -32,7 +32,7 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
         super().__init__()
         self.current_function = None
 
-    def _visit_Function(self, node):
+    def _visit_FunctionDefinition(self, node):
         self.current_function = node.symbol_table[node.identifier]
         self._generic_visit(node)
         self.current_function = None

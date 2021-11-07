@@ -25,7 +25,7 @@ def parse(token_stream):
         parameters = parameter_list(lexer)
         lexer.eat('RIGHT_PARENTHESIS')
         body = compound_statement(lexer)
-        node = ast.Function(name.token, type_specifier, name.name, parameters, body)
+        node = ast.FunctionDefinition(name.token, type_specifier, name.name, parameters, body)
         return node
 
     def parameter_list(lexer):

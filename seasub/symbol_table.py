@@ -177,7 +177,7 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._generic_visit(node)
         self._add_symbol_table(node)
 
-    def _visit_Function(self, node):
+    def _visit_FunctionDefinition(self, node):
         self._current_scope = SymbolTable(node.identifier, self._current_scope)
         self._generic_visit(node)
         self._add_symbol_table(node)

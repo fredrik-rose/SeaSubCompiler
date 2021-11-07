@@ -190,6 +190,10 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._generic_visit(node)
         self._add_symbol_table(node)
 
+    def _visit_FunctionCall(self, node):
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+
     def _visit_ReturnStatement(self, node):
         self._generic_visit(node)
         self._add_symbol_table(node)

@@ -3,6 +3,7 @@ int main(int x)
     int a;
     int b;
     int d;
+    double z;
 
     a = -3 +
     -(4 + +-9)
@@ -31,6 +32,8 @@ int main(int x)
     }
 
     d = 1 + 2;
+
+    z = add(1.0, 2.0 + 3.0);
 
     return d + 11;
 }

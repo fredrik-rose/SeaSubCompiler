@@ -136,9 +136,21 @@ def parse(token_stream):
             lexer.eat('RIGHT_PARENTHESIS')
         elif lexer.peek().type == 'IDENTIFIER':
             node = identifier(lexer)
+            if lexer.peek().type == 'LEFT_PARENTHESIS':
+                lexer.eat('LEFT_PARENTHESIS')
+                arguments = argument_expression_list(lexer)
+                lexer.eat('RIGHT_PARENTHESIS')
+                node = ast.FunctionCall(node.token, node, arguments)
         else:
             node = constant(lexer)
         return node
+
+    def argument_expression_list(lexer):
+        arguments = [additive_expression(lexer)]
+        while lexer.peek().type == 'COMMA':
+            lexer.eat('COMMA')
+            arguments.append(additive_expression(lexer))
+        return arguments
 
     def identifier(lexer):
         name = lexer.eat('IDENTIFIER')

@@ -28,6 +28,22 @@ class _SemanticAnalyzerDeclaredIdentifiers(ast.NodeVisitor):
 
 
 class _SemanticAnalyzerTypes(ast.NodeVisitor):
+    def _visit_FunctionCall(self, node):
+        parameters = node.symbol_table[node.identifier.name].parameters
+        num_arguments = len(node.arguments)
+        num_parameters = len(parameters)
+        if num_arguments != num_parameters:
+            raise err.SeaSubSemanticError((f"Calling function '{node.identifier.name}' with incorrect number of "
+                                           f"arguments, expected {num_parameters} got {num_arguments}, "
+                                           f"on line {node.token.line}:{node.token.column}"))
+        for i, (arg, param) in enumerate(zip(node.arguments, parameters)):
+            arg_type = self.visit(arg)
+            if arg_type != param.type:
+                raise err.SeaSubSemanticError((f"Calling function '{node.identifier.name}' with invalid type for "
+                                               f"parameter {i + 1}, expected '{param.type}' got '{arg_type}', "
+                                               f"on line {arg.token.line}:{arg.token.column}"))
+        return self.visit(node.identifier)
+
     def _visit_Assignment(self, node):
         identifier_type = node.symbol_table[node.identifier].type
         value_type = self.visit(node.value)

@@ -9,9 +9,9 @@ def save_graph(symbol_table, file_path):
 
 
 def _get_nodes():
-    return (NoOperation, TranslationUnit, Function, Parameter, ReturnStatement, CompoundStatement,
-            Declaration, Assignment, BinaryOperator, UnaryOperator, Identifier, IntegerConstant,
-            RealConstant)
+    return (NoOperation, TranslationUnit, Function, Parameter, FunctionCall, ReturnStatement,
+            CompoundStatement, Declaration, Assignment, BinaryOperator, UnaryOperator, Identifier,
+            IntegerConstant, RealConstant)
 
 
 class NodeVisitor:
@@ -101,6 +101,22 @@ class Parameter(AbstractSyntaxTreeNode):
 
     def get_children(self):
         return []
+
+
+class FunctionCall(AbstractSyntaxTreeNode):
+    def __init__(self, token, identifier, arguments):
+        self.token = token
+        self.identifier = identifier
+        self.arguments = arguments
+
+    def __repr__(self):
+        return f"FunctionCall({self.identifier}, {self.arguments})"
+
+    def __str__(self):
+        return f"{str(self.identifier)} ({self.arguments})"
+
+    def get_children(self):
+        return [self.identifier] + self.arguments
 
 
 class ReturnStatement(AbstractSyntaxTreeNode):
@@ -268,6 +284,9 @@ class _Graph(NodeVisitor):
 
     def _visit_Parameter(self, node):
         self._add_connections(node, f"{node.type_specifier} {node.identifier}")
+
+    def _visit_FunctionCall(self, node):
+        self._add_connections(node, "( )")
 
     def _visit_ReturnStatement(self, node):
         self._add_connections(node, "return")

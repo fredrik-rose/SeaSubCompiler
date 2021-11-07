@@ -9,6 +9,10 @@ class Intepreter(ast.NodeVisitor):
         super().__init__()
         self.environment = {}
 
+    def _visit_FunctionCall(self, node):
+        # TODO: Implement!
+        return 0
+
     def _visit_Assignment(self, node):
         self.environment[node.identifier] = self.visit(node.value)
 

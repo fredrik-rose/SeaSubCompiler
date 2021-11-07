@@ -8,6 +8,12 @@ def optimize(abstract_syntax_tree):
 
 
 class _ConstantFolding(ast.NodeVisitor):
+    def _visit_FunctionCall(self, node):
+        assert len(node.get_children()) == 1 + len(node.arguments)
+        self.visit(node.identifier)
+        node.arguments = [self.visit(arg) for arg in node.arguments]
+        return node
+
     def _visit_ReturnStatement(self, node):
         assert len(node.get_children()) == 1
         node.value = self.visit(node.value)

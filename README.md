@@ -99,7 +99,12 @@ unary_expression ->
 primary_expression ->
     constant |
     identifier |
-    '(' expression ')'
+    '(' expression ')' |
+    identifier '(' argument_expression_list ')'
+
+argument_expression_list ->
+    additive_expression |
+    additive_expression ',' argument_expression_list
 
 type_specifier ->
     'int' |

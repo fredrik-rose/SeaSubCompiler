@@ -55,7 +55,7 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
 
     def _visit_FunctionCall(self, node):
         function = node.symbol_table[node.identifier.name]
-        if type(function) != symtab.Function:
+        if not isinstance(function, symtab.Function):
             raise err.SeaSubSemanticError((f"Called object '{node.identifier.name}' is not a function "
                                            f"on line {node.token.line}:{node.token.column}"))
         parameters = function.parameters
@@ -82,7 +82,7 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
 
     def _visit_Assignment(self, node):
         identifier = node.symbol_table[node.identifier]
-        if type(identifier) != symtab.Variable:
+        if not isinstance(identifier, symtab.Variable):
             raise err.SeaSubSemanticError((f"Assigning to an object that is not a variable "
                                            f"on line {node.token.line}:{node.token.column}"))
         identifier_type = identifier.type

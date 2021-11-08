@@ -16,11 +16,38 @@ python main.py -o 1 --ast ast.dot --symbol-table symbol-table.dot --intermediate
 The Sea sub compiler can generate .dot graph files containing the abstract syntax tree and the symbol table. These can
 be visualized by using e.g. Graphvis:
 ```
-dot -Tpng -o abstract-syntax-tree.png abstract-syntax-tree.dot
+dot -Tpng -o ast.png ast.dot
 dot -Tpng -o symbol-table.png symbol-table.dot
 ```
 
-## Grammar
+## Architecture
+
+This section describes the architecture of the sea sub compiler.
+
+<img src="img/architecture.png" width="1000"/>
+
+### Lexer
+
+The lexical analyzer (also known as scanner or tokenizer). This is the first step of the compiler that takes the raw
+sea sub source code as input and outputs tokens (e.g. numbers, brackets, operators, etc.). It performs the first part
+of the syntax check as it only accepts tokens that are part of the sea sub language.
+
+### Parser
+
+The second step of the compiler takes tokens from the lexer as input and outputs an abstract syntax tree. It performs
+the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
+language. It is this part of the compiler that implements the grammar as a recursive descent parser.
+
+A core part of the compiler is the node visitor. It provides functionality to traverse an abstract syntax tree by
+implementing the *visitor* design pattern. The sub classes of the node visitor provides a visitor function for
+each relevant node in the abstract syntax tree. The default visitor will be used for nodes that do not have a visitor.
+The Sea sub compiler uses the node visitor heavily, for example:
+
+* Semantic analysis
+* Symbol table creation
+* Visualization
+
+#### Grammar
 
 This section defines the grammar of the sea sub language.
 
@@ -116,33 +143,6 @@ constant ->
     DOUBLE_CONSTANT
 ```
 
-## Architecture
-
-This section describes the architecture of the sea sub compiler.
-
-<img src="img/architecture.png" width="1000"/>
-
-### Lexer
-
-The lexical analyzer (also known as scanner or tokenizer). This is the first step of the compiler that takes the raw
-sea sub source code as input and outputs tokens (e.g. numbers, brackets, operators, etc.). It performs the first part
-of the syntax check as it only accepts tokens that are part of the sea sub language.
-
-### Parser
-
-The second step of the compiler takes tokens from the lexer as input and outputs an abstract syntax tree. It performs
-the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
-language. It is this part of the compiler that implements the grammar as a recursive descent parser.
-
-A core part of the compiler is the node visitor. It provides functionality to traverse an abstract syntax tree by
-implementing the *visitor* design pattern. The sub classes of the node visitor provides a visitor function for
-each relevant node in the abstract syntax tree. The default visitor will be used for nodes that do not have a visitor.
-The Sea sub compiler uses the node visitor heavily, for example:
-
-* Semantic analysis
-* Symbol table creation
-* Visualization
-
 ### Semantic Analyzer
 
 The third step of the compiler verifies the semantic correctness of the program. The abstract syntax tree created by
@@ -201,7 +201,6 @@ The first operator of the *q_call* instruction is the id of the function (i.e. i
 parameters. Each function must have a *q_label* instruction at the very end of the function. The *q_return* instruction
 is used to return from a function. The first parameter is the label at the end of the corresponding function and the
 second parameter is the return value.
-
 
 ### Symbol Table
 

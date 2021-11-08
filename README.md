@@ -8,10 +8,8 @@ A compiler for a small subset (sub) of the C (sea) programming language.
 
 Stand in the root if the SeaSubCompiler directory and run:
 ```
-python main.py -o 1 --ast abstract-syntax-tree.dot --symbol-table symbol-table.dot demo.c
+python main.py -o 1 --ast ast.dot --symbol-table symbol-table.dot --intermediate-code intermediate-code.ic demo.c
 ```
-
-Currently only runs a toy example.
 
 ### Visualization
 
@@ -151,11 +149,59 @@ The third step of the compiler verifies the semantic correctness of the program.
 the parser is the input and the output is a verified abstract syntax tree. The semantic verification includes type
 correctness and declaration of variables before use.
 
+A prerequisite for this stage is that a symbol table has been attached to the abstract syntax tree.
+
 ### Optimizer
 
 The fourth step of the compiler performs optimizations on the abstract syntax tree. The output is a modified abstract
 syntax tree. Currently only constant folding is implemented. Optimization is probably the most important part of a
 compiler and it can be performed in several of the compilation stages.
+
+### Intermediate Code Generator
+
+The fifth step of the compiler generates intermediate code from the abstract syntax tree. Intermediate code is a
+platform independent assembler like representation of the program. The symbol table is extended with temporary
+variables (named e.g. *$1*, *$2*, etc.) as needed.
+
+The Sea sub compiler uses the quadruple format for the intermediate code:
+```
+operator    operand_1    operand_2    result
+```
+
+The *operator* performs an operation on the *operands* and stores the result in *result*. Typically the operands and
+result are variable identifiers, the following is the complete list of valid types (depending on the operator):
+
+* *const*: an integer constant
+* *sym_id*: an identifier (i.e. name) of a variable in the symbol table
+* *label*: a label marking a possible jump location
+
+#### Instructions
+
+The following table defines the valid quadruple instructions.
+
+| Operator | Operand 1 | Operand 2 | Result | Description                      |
+| -------- | --------- | --------- | ------ | -------------------------------- |
+| q_load   | const     | -         | sym_id | Loads a constant value           |
+| q_uplus  | sym_id    | -         | sym_id | Unary positive                   |
+| q_uminus | sym_id    | -         | sym_id | Unary negation                   |
+| q_plus   | sym_id    | sym_id    | sym_id | Binary addition                  |
+| q_minus  | sym_id    | sym_id    | sym_id | Binary subtraction               |
+| q_mult   | sym_id    | sym_id    | sym_id | Binary multiplication            |
+| q_div    | sym_id    | sym_id    | sym_id | Binary division                  |
+| q_assign | sym_id    | -         | sym_id | Assignment                       |
+| q_param  | sym_id    | -         | -      | Function parameter               |
+| q_call   | sym_id    | const     | sym_id | Call a function                  |
+| q_label  | label     | -         | -      | Specify a possible jump location |
+| q_return | label     | sym_id    | -      | Return from a function           |
+
+#### Function Calls
+
+A function call is performed by adding a *q_param* instruction for each argument followed by a *q_call* instruction.
+The first operator of the *q_call* instruction is the id of the function (i.e. its name), the second is the number of
+parameters. Each function must have a *q_label* instruction at the very end of the function. The *q_return* instruction
+is used to return from a function. The first parameter is the label at the end of the corresponding function and the
+second parameter is the return value.
+
 
 ### Symbol Table
 

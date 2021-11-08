@@ -3,7 +3,7 @@ int main(int x)
     int a;
     int b;
     int d;
-    double z;
+    int z;
 
     a = -3 +
     -(4 + +-9)
@@ -33,16 +33,19 @@ int main(int x)
 
     d = 1 + 2;
 
-    z = add(1.0, 2.0 + 3.0);
+    z = add(1, 2 + 3);
 
-    return d + 11;
+    return -d + 11;
 }
 
-double add(double a, double b)
+int add(int a, int b)
 {
-    double z;
+    int bias;
+    int z;
 
-    z = a + b;
+    bias = 12;
+
+    z = a + b + bias;
 
     return z;
 }

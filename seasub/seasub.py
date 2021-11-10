@@ -6,7 +6,6 @@ import sys
 from seasub import abstract_syntax_tree as ast
 from seasub import error_handler as err
 from seasub import intermediate_code_generator as icg
-from seasub import interpreter
 from seasub import lexer
 from seasub import optimizer as opt
 from seasub import parser
@@ -33,6 +32,3 @@ def run(file_path, optimization_level, ast_graph_path=None, symbol_table_graph_p
         symtab.save_graph(symbol_table, symbol_table_graph_path)
     if intermediate_code_path:
         icg.save_code(intermediate_code, intermediate_code_path)
-    interp = interpreter.Intepreter()
-    interp.visit(abstract_syntax_tree)
-    print(f"Result: {interp.environment}")

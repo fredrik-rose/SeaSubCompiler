@@ -39,6 +39,7 @@ class Generator(ast.NodeVisitor):
         self._temp_counter = None
         self._label_counter = None
         self._current_label = None
+        self._current_function = None
 
     def generate(self, abstract_syntax_tree):
         self._temp_counter = 0
@@ -52,6 +53,7 @@ class Generator(ast.NodeVisitor):
 
     def _visit_FunctionDefinition(self, node):
         self._verify_type(node)
+        self._current_function = node.symbol_table[node.identifier]
         self._current_label = self._generate_label()
         self._code = []
         self._functions[node.identifier] = self._code
@@ -112,13 +114,15 @@ class Generator(ast.NodeVisitor):
 
     @staticmethod
     def _verify_type(node):
-        if node.type_specifier == 'double':
-            raise NotImplementedError("The intermediate code generator does not support real values")
+        if node.type_specifier != 'int':
+            raise NotImplementedError("The intermediate code generator only support integers")
 
     def _generate_temp(self, node):
         temp = f'${self._temp_counter}'
         self._temp_counter += 1
-        node.symbol_table[temp] = symtab.Variable(temp, 'int')
+        variable = symtab.Variable(temp, 'int')
+        self._current_function.add_variable(variable)
+        node.symbol_table[temp] = variable
         return temp
 
     def _generate_label(self):

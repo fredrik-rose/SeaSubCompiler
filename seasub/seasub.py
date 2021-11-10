@@ -11,10 +11,12 @@ from seasub import optimizer as opt
 from seasub import parser
 from seasub import semantic_analyzer as sa
 from seasub import symbol_table as symtab
+from seasub import target_code_generator as tcg
 
 
-def run(file_path, optimization_level, ast_graph_path=None, symbol_table_graph_path=None, intermediate_code_path=None):
-    with open(file_path, 'r') as file:
+def run(input_file_path, output_file_path, optimization_level,
+        ast_graph_path=None, symbol_table_graph_path=None, intermediate_code_path=None):
+    with open(input_file_path, 'r') as file:
         source_code = file.read()
     try:
         token_stream = lexer.tokenize(source_code)
@@ -26,6 +28,8 @@ def run(file_path, optimization_level, ast_graph_path=None, symbol_table_graph_p
     if optimization_level > 0:
         opt.optimize(abstract_syntax_tree)
     intermediate_code = icg.generate_intermediate_code(abstract_syntax_tree)
+    target_code = tcg.generate(intermediate_code, symbol_table, input_file_path.name)
+    tcg.save_code(target_code, output_file_path)
     if ast_graph_path:
         ast.save_graph(abstract_syntax_tree, ast_graph_path)
     if symbol_table_graph_path:

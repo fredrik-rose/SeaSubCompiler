@@ -204,6 +204,77 @@ id of the function (i.e. its name), the second is the number of parameters. Each
 instruction at the very end of the function. The *q_return* instruction is used to return from a function. The first
 parameter is the label at the end of the corresponding function and the second parameter is the return value.
 
+### Target Code Generator
+
+The sixth and last step of the compiler generates target code from the intermediate code. This part of the compiler
+targets a specific architecture (e.g. x86, aarch64, etc.). The current implementation generates code for the x86-64
+architecture. It is quite simple to add support other architectures to the compiler, the only thing needed is to add
+another target code generator. All other parts of the compiler remains the same.
+
+It is very difficult to generate good target code (i.e. assembly). The current implementation makes no effort in
+producing good code, it is a quite stupid translator of the intermediate code.
+
+An interesting implementation detail is how the module performs dispatching to the correct functions. To call a
+module local function using a string the following can be used:
+
+```
+globals()[function_string](arg1, arg2)
+```
+
+To dispatch a call to a function depending on the type of the first parameter the functools' singledispatch can be
+used as follows:
+
+```
+@functools.singledispatch
+def _my_func(arg):
+    raise NotImplementedError()
+
+
+@_my_func.register(int)
+def _(arg):
+    print("arg is an int")
+
+
+@_my_func.register(list)
+def _(arg):
+    print("arg is a list")
+```
+
+#### Calling Convention
+
+Although the target architecture is x86-64 the target code generator does not follow a common calling convention
+(e.g. Microsoft x64 or System V AMD64 ABI). Instead it implements its own as follows.
+
+* The stack pointer must always be aligned to 8 bytes (and grows towards lower addresses).
+* Only the *int* data type is supported and the size is 32 bits (i.e. 4 bytes).
+* The rax, rcx, rdx registers (and their 32 bits counterpart eax, ecx, and edx) are volatile registers, meaning that
+they must be saved by the caller.
+* The rbx, rsp, and rbp registers are non-volatile, meaning that they must be restored by the callee.
+
+Caller:
+
+1. Push the parameters on the stack in revert order (e.g. right to left), so that the first parameter is on top
+of the stack, making sure the stack pointer is always aligned to 8 bytes.
+2. The return address is pushed to the stack (implicitly done by the *call* instruction).
+3. Jump to the called function (done by the *call* instruction).
+4. When control is returned the parameters are removed from the stack.
+5. The return value can be found in the return register (*eax*).
+
+Callee:
+
+1. Push the stack frame pointer register (*rbp*) to the stack
+2. Set up a new stack frame pointer by moving the stack pointer register (*rsp*) to the stack frame pointer register
+(*rbp*).
+3. Allocate memory for the local parameters on the stack.
+4. Execute the body of the function.
+5. Move the return value to the return register (*eax*).
+6. Remove the local variables from the stack.
+7. Restore the stack frame pointer register (*rbp*) by popping it from the stack.
+8. Jump back to the caller (done by the *ret* instruction).
+9. Remove the return address from the stack (implicitly done by the *ret* instruction).
+
+<img src="img/stack-frame.png" width="800"/>
+
 ### Symbol Table
 
 This component is responsible to manage all kinds of symbols in the language, for built-in types, variables and

@@ -26,8 +26,7 @@ class _ConstantFolding(ast.NodeVisitor):
         assert len(node.get_children()) == 2
         a = self.visit(node.a)
         b = self.visit(node.b)
-        if isinstance(a, ast.IntegerConstant):
-            assert isinstance(b, ast.IntegerConstant)
+        if isinstance(a, ast.IntegerConstant) and isinstance(b, ast.IntegerConstant):
             operators = {'+': lambda a, b: a + b,
                          '-': lambda a, b: a - b,
                          '*': lambda a, b: a * b,
@@ -36,8 +35,7 @@ class _ConstantFolding(ast.NodeVisitor):
             new_node = ast.IntegerConstant(node.token, value)
             new_node.symbol_table = node.symbol_table
             return new_node
-        if isinstance(a, ast.RealConstant):
-            assert isinstance(b, ast.RealConstant)
+        if isinstance(a, ast.RealConstant) and isinstance(b, ast.RealConstant):
             operators = {'+': lambda a, b: a + b,
                          '-': lambda a, b: a - b,
                          '*': lambda a, b: a * b,

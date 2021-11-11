@@ -197,10 +197,12 @@ The following table defines the valid quadruple instructions.
 #### Function Calls
 
 A function call is performed by adding a *q_param* instruction for each argument followed by a *q_call* instruction.
-The first operator of the *q_call* instruction is the id of the function (i.e. its name), the second is the number of
-parameters. Each function must have a *q_label* instruction at the very end of the function. The *q_return* instruction
-is used to return from a function. The first parameter is the label at the end of the corresponding function and the
-second parameter is the return value.
+The *q_param* instructions must be in reverted parameter order (i.e. right to left) and located just before the
+*q_call* instruction with no other instructions in between. The reason for the inverted order is to make life easier
+for the target code generator (due to the stack data structure). The first operator of the *q_call* instruction is the
+id of the function (i.e. its name), the second is the number of parameters. Each function must have a *q_label*
+instruction at the very end of the function. The *q_return* instruction is used to return from a function. The first
+parameter is the label at the end of the corresponding function and the second parameter is the return value.
 
 ### Symbol Table
 

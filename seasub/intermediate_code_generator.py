@@ -92,7 +92,7 @@ class Generator(ast.NodeVisitor):
 
     def _visit_FunctionCall(self, node):
         arguments = [self.visit(arg) for arg in node.arguments]
-        for arg in arguments:
+        for arg in arguments[::-1]:  # Revert the order to make life easier for the target code generator.
             self._code.append(Quadruple('q_param', arg, None, None, node.symbol_table))
         temp = self._generate_temp(node)
         self._code.append(Quadruple('q_call', node.identifier.name, len(arguments), temp, node.symbol_table))

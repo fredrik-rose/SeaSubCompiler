@@ -38,6 +38,8 @@ The second step of the compiler takes tokens from the lexer as input and outputs
 the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
 language. It is this part of the compiler that implements the grammar as a recursive descent parser.
 
+#### Abstract Syntax Tree
+
 A core part of the compiler is the node visitor. It provides functionality to traverse an abstract syntax tree by
 implementing the *visitor* design pattern. The sub classes of the node visitor provides a visitor function for
 each relevant node in the abstract syntax tree. The default visitor will be used for nodes that do not have a visitor.
@@ -282,9 +284,16 @@ functions. To support lexical scopes it is implemented as a tree data structure,
 level.
 
 The symbol table is attached to the abstract syntax tree by adding a *symbol table* member to each of the node in the
-abstract syntax tree, referring to the corresponding lexical scope in the symbol table.
+abstract syntax tree, referring to the corresponding lexical scope in the symbol table, using the visitor design
+pattern.
+
+#### Data Structure
+
+To support lexical scoping the symbol table is implemented as tree, where each node represents a lexical scope.
+The nodes are implemented as a hash map (i.e. dictionary) where the key is the id (name) of the symbol. The [] operator
+is overloaded to first look for a symbol in the current scope and if can't be found the tree is traverse towards the
+root until the symbol is found. Each type of symbol is implemented as a separate class.
 
 ### Error Handler
 
 This component is responsible for the error handling and is used by all parts of the compiler.
-

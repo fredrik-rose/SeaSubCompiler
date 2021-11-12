@@ -82,7 +82,7 @@ class _SemanticAnalyzerTypes(ast.NodeVisitor):
 
     def _visit_Assignment(self, node):
         identifier = node.symbol_table[node.identifier]
-        if not isinstance(identifier, symtab.Variable):
+        if not isinstance(identifier, (symtab.Variable, symtab.Parameter)):
             raise err.SeaSubSemanticError((f"Assigning to an object that is not a variable "
                                            f"on line {node.token.line}:{node.token.column}"))
         identifier_type = identifier.type

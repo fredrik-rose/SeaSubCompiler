@@ -11,6 +11,39 @@ Stand in the root if the SeaSubCompiler directory and run:
 python main.py -o 1 --ast ast.dot --symbol-table symbol-table.dot --intermediate-code intermediate-code.ic demo.c
 ```
 
+This will compile *demo.c* into an assembly file named *demo.s*.
+
+### Executable
+
+To create an executable from the assembly file one can for example use gcc as follows.
+
+
+Compile the assembly file into an object file:
+```
+gcc -c demo.s
+```
+
+Link the object file into an executable:
+```
+gcc demo.o
+```
+
+Run the executable:
+```
+./a.out
+```
+
+Print the output (prints the output from the previous command):
+```
+echo $?
+```
+Note that the returned value is interpreted as an 8 bit unsigned int.
+
+Use gcc to generate an assembly file that can be compared with the output from the Sea sub compiler:
+```
+gcc -S -O0 -fno-asynchronous-unwind-tables demo.c
+```
+
 ### Visualization
 
 The Sea sub compiler can generate .dot graph files containing the abstract syntax tree and the symbol table. These can

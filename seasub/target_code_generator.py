@@ -109,8 +109,8 @@ def _binary_operator(operator, quad, output):
     operand_1 = _get_address(quad.symbol_table[quad.operand_1])
     operand_2 = _get_address(quad.symbol_table[quad.operand_2])
     result = _get_address(quad.symbol_table[quad.result])
-    output.append(f'movl {operand_1}, %edx')
-    output.append(f'movl {operand_2}, %eax')
+    output.append(f'movl {operand_2}, %edx')
+    output.append(f'movl {operand_1}, %eax')
     output.append(f'{operator} %edx, %eax')
     output.append(f'movl %eax, {result}')
 

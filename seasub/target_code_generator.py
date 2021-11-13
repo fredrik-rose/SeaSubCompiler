@@ -57,10 +57,9 @@ def q_param(quad, output):
 
 
 def q_call(quad, output):
-    function = quad.symbol_table[quad.operand_1]
     result = _get_address(quad.symbol_table[quad.result])
     output.append(f'call {quad.operand_1}')  # Pushes the return address on the stack.
-    output.append(f'addq ${len(function.parameters) * _SIZE_OF_INT * 2}, %rsp')  # Remove the parameters from the stack.
+    output.append(f'addq ${quad.operand_2 * _SIZE_OF_INT * 2}, %rsp')  # Remove the parameters from the stack.
     # Multiply by 2 since each parameter is 8 byte aligned.
     output.append(f'movl %eax, {result}')  # Store the returned value (which will be located in eax).
 

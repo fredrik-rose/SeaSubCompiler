@@ -246,8 +246,14 @@ targets a specific architecture (e.g. x86, aarch64, etc.). The current implement
 architecture. It is quite simple to add support other architectures to the compiler, the only thing needed is to add
 another target code generator. All other parts of the compiler remains the same.
 
-It is very difficult to generate good target code (i.e. assembly). The current implementation makes no effort in
-producing good code, it is a quite stupid translator of the intermediate code.
+It is very difficult to generate good target code (i.e. assembly). One important part of a target code generator is
+register allocation. Reading and writing to/from main memory is really slow compared to operating on register,
+therefore it is important to keep as much as possible in registers as long as possible. One approach is to mode the
+problem as a graph, the nodes represent live ranges of symbols and the edges shows which symbols are live
+simultaneously. The register allocation can then be solved as a graph-coloring problem using the Chaitin's algorithm.
+
+The current implementation do however not make any effort in producing good code, it is a quite stupid translator of
+the intermediate code.
 
 An interesting implementation detail is how the module performs dispatching to the correct functions. To call a
 module local function using a string the following can be used:

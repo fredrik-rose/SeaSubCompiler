@@ -1,51 +1,41 @@
-int add(int a, int b, int c)
+int factorial(int x)
 {
-    int bias;
-    int z;
-    int e;
+    if (x)
+    {
+        int nextX;
 
-    bias = 12;
+        nextX = x - 1;
 
-    z = (a + bias) / b;
+        return x * factorial(nextX);
+    }
+    else
+        return 1;
+}
 
-    return z;
+int linear(int w, int b, int x)
+{
+    int result;
+
+    result = b + w * x;
+
+    return result;
 }
 
 int main(int x)
 {
-    int a;
-    int b;
-    int d;
-    int z;
+    int w;
+    int result;
 
-    a = -3 +
-    -(4 + +-9)
-    * 5;
-
-    ;;
-
-    b = -3 + -(4 + +-9) + 1;
+    x = 7;
+    w = 10;
 
     {
-        int c;
+        int b;
 
-        c = b + 6 + 7;
+        b = 16;
+
+        result = factorial(linear(w / 3, -b, x));
     }
 
-    {
-        int e;
-
-        e = 8;
-    }
-
-    {
-
-    }
-
-    d = 1 + a;
-
-    z = add(6, add(2 + 3, 1, 2), 7);
-
-    return z + a + b;
+    return result;
 }
-

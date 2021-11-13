@@ -10,8 +10,8 @@ def save_graph(symbol_table, file_path):
 
 def _get_nodes():
     return (NoOperation, TranslationUnit, FunctionDefinition, Parameter, FunctionCall,
-            ReturnStatement, CompoundStatement, Declaration, Assignment, BinaryOperator,
-            UnaryOperator, Identifier, IntegerConstant, RealConstant)
+            ReturnStatement, CompoundStatement, Declaration, Assignment, IfStatement,
+            BinaryOperator, UnaryOperator, Identifier, IntegerConstant, RealConstant)
 
 
 class NodeVisitor:
@@ -259,6 +259,39 @@ class Assignment(AbstractSyntaxTreeNode):
         return [self._value]
 
 
+class IfStatement(AbstractSyntaxTreeNode):
+    def __init__(self, token, predicate, consequent, alternative):
+        super().__init__(token)
+        self._predicate = predicate
+        self._consequent = consequent
+        self._alternative = alternative
+
+    @property
+    def predicate(self):
+        return self._predicate
+
+    @predicate.setter
+    def predicate(self, value):
+        self._predicate = value
+
+    @property
+    def consequent(self):
+        return self._consequent
+
+    @property
+    def alternative(self):
+        return self._alternative
+
+    def __repr__(self):
+        return f"IfStatement({repr(self._predicate)}, {repr(self._consequent)}, {repr(self._alternative)})"
+
+    def __str__(self):
+        return f"if ({self._predicate})\nthen\n{self._consequent}\nelse\n{self._alternative}"
+
+    def get_children(self):
+        return [self._predicate, self._consequent, self._alternative]
+
+
 class BinaryOperator(AbstractSyntaxTreeNode):
     def __init__(self, token, operator, a, b):
         super().__init__(token)
@@ -416,6 +449,9 @@ class _Graph(NodeVisitor):
 
     def _visit_Assignment(self, node):
         self._add_connections(node, f"{node.identifier} = ")
+
+    def _visit_IfStatement(self, node):
+        self._add_connections(node, "if")
 
     def _visit_BinaryOperator(self, node):
         self._add_connections(node, f"{node.operator}")

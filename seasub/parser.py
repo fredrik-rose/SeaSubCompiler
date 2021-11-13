@@ -75,10 +75,23 @@ def parse(token_stream):
     def statement(lexer):
         if lexer.peek().type == 'LEFT_CURLY_BRACKET':
             node = compound_statement(lexer)
+        elif lexer.peek().type == 'IF':
+            node = selection_statement(lexer)
         elif lexer.peek().type == 'RETURN':
             node = jump_statement(lexer)
         else:
             node = expression_statement(lexer)
+        return node
+
+    def selection_statement(lexer):
+        token = lexer.eat('IF')
+        lexer.eat('LEFT_PARENTHESIS')
+        predicate = expression(lexer)
+        lexer.eat('RIGHT_PARENTHESIS')
+        consequent = statement(lexer)
+        lexer.eat('ELSE')
+        alternative = statement(lexer)
+        node = ast.IfStatement(token, predicate, consequent, alternative)
         return node
 
     def jump_statement(lexer):

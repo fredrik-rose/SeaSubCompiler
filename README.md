@@ -123,7 +123,11 @@ statement_list ->
 statement ->
     compound_statement |
     expression_statement |
+    selection_statement |
     jump_statement
+
+selection_statement ->
+    'if' '(' expression ')' statement 'else' statement
 
 jump_statement ->
     'return' expression ';'
@@ -178,6 +182,8 @@ constant ->
     DOUBLE_CONSTANT
 ```
 
+An example of a complete C grammar can be found here: https://www.lysator.liu.se/c/ANSI-C-grammar-y.html
+
 ### Semantic Analyzer
 
 The third step of the compiler verifies the semantic correctness of the program. The abstract syntax tree created by
@@ -214,20 +220,22 @@ result are variable identifiers, the following is the complete list of valid typ
 
 The following table defines the valid quadruple instructions.
 
-| Operator | Operand 1 | Operand 2 | Result | Description                      |
-| -------- | --------- | --------- | ------ | -------------------------------- |
-| q_load   | const     | -         | sym_id | Loads a constant value           |
-| q_uplus  | sym_id    | -         | sym_id | Unary positive                   |
-| q_uminus | sym_id    | -         | sym_id | Unary negation                   |
-| q_plus   | sym_id    | sym_id    | sym_id | Binary addition                  |
-| q_minus  | sym_id    | sym_id    | sym_id | Binary subtraction               |
-| q_mult   | sym_id    | sym_id    | sym_id | Binary multiplication            |
-| q_div    | sym_id    | sym_id    | sym_id | Binary division                  |
-| q_assign | sym_id    | -         | sym_id | Assignment                       |
-| q_param  | sym_id    | -         | -      | Function parameter               |
-| q_call   | sym_id    | const     | sym_id | Call a function                  |
-| q_label  | label     | -         | -      | Specify a possible jump location |
-| q_return | label     | sym_id    | -      | Return from a function           |
+| Operator   | Operand 1 | Operand 2 | Result | Description                      |
+| ---------- | --------- | --------- | ------ | -------------------------------- |
+| q_load     | const     | -         | sym_id | Loads a constant value           |
+| q_uplus    | sym_id    | -         | sym_id | Unary positive                   |
+| q_uminus   | sym_id    | -         | sym_id | Unary negation                   |
+| q_plus     | sym_id    | sym_id    | sym_id | Binary addition                  |
+| q_minus    | sym_id    | sym_id    | sym_id | Binary subtraction               |
+| q_mult     | sym_id    | sym_id    | sym_id | Binary multiplication            |
+| q_div      | sym_id    | sym_id    | sym_id | Binary division                  |
+| q_assign   | sym_id    | -         | sym_id | Assignment                       |
+| q_jmp      | label     | -         | -      | Unconditional jump               |
+| q_jmpifnot | label     | sym_id    | -      | Jump if false/zero               |
+| q_param    | sym_id    | -         | -      | Function parameter               |
+| q_call     | sym_id    | const     | sym_id | Call a function                  |
+| q_label    | label     | -         | -      | Specify a possible jump location |
+| q_return   | label     | sym_id    | -      | Return from a function           |
 
 #### Function Calls
 

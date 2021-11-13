@@ -22,6 +22,12 @@ class _ConstantFolding(ast.NodeVisitor):
         assert len(node.get_children()) == 1
         node.value = self.visit(node.value)
 
+    def _visit_IfStatement(self, node):
+        assert len(node.get_children()) == 3
+        node.predicate = self.visit(node.predicate)
+        self.visit(node.consequent)
+        self.visit(node.alternative)
+
     def _visit_BinaryOperator(self, node):
         assert len(node.get_children()) == 2
         a = self.visit(node.a)

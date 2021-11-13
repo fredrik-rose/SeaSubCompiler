@@ -122,6 +122,16 @@ def q_assign(quad, output):
     output.append(f'movl %eax, {variable}')
 
 
+def q_jmp(quad, output):
+    output.append(f'jmp {quad.operand_1}')
+
+
+def q_jmpifnot(quad, output):
+    value = _get_address(quad.symbol_table[quad.operand_2])
+    output.append(f'movl {value}, %ecx')
+    output.append(f'jecxz {quad.operand_1}')  # Jump if the ecx register is zero.
+
+
 def q_label(quad, output):
     output.append(f'{quad.operand_1}:')
 

@@ -31,7 +31,7 @@ class Quadruple:
     def __str__(self):
         def column(field):
             value = "-" if field is None else str(field)
-            return f"{value}{' ' * (10 - len(value))}"
+            return f"{value}{' ' * (15 - len(value))}"
         return "".join(column(e) for e in (self._operator, self._operand_1, self._operand_2, self._result))
 
     @property
@@ -109,6 +109,17 @@ class Generator(ast.NodeVisitor):
     def _visit_Assignment(self, node):
         value = self.visit(node.value)
         self._code.append(Quadruple('q_assign', value, None, node.identifier, node.symbol_table))
+
+    def _visit_IfStatement(self, node):
+        predicate = self.visit(node.predicate)
+        alternative = self._generate_label()
+        end = self._generate_label()
+        self._code.append(Quadruple('q_jmpifnot', alternative, predicate, None, node.symbol_table))
+        self.visit(node.consequent)
+        self._code.append(Quadruple('q_jmp', end, None, None, node.symbol_table))
+        self._code.append(Quadruple('q_label', alternative, None, None, node.symbol_table))
+        self.visit(node.alternative)
+        self._code.append(Quadruple('q_label', end, None, None, node.symbol_table))
 
     def _visit_BinaryOperator(self, node):
         operators = {'+': 'q_plus', '-': 'q_minus', '*': 'q_mult', '/': 'q_div'}

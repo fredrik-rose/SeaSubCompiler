@@ -250,6 +250,10 @@ class _SymbolTableVisitor(ast.NodeVisitor):
         self._generic_visit(node)
         self._add_symbol_table(node)
 
+    def _visit_IfStatement(self, node):
+        self._generic_visit(node)
+        self._add_symbol_table(node)
+
     def _visit_BinaryOperator(self, node):
         self._generic_visit(node)
         self._add_symbol_table(node)

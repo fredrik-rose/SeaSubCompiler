@@ -8,9 +8,12 @@ from seasub import error_handler as err
 
 def tokenize(text):
     token_specification = [
+        # The order is important.
         ('LEFT_CURLY_BRACKET', r'\{'),  # Left curly bracket.
         ('RIGHT_CURLY_BRACKET', r'\}'),  # Right curly bracket.
         ('TYPE_SPECIFIER', r'int|double'),  # Type specifier.
+        ('IF', r'if'),  # If keyword.
+        ('ELSE', r'else'),  # Else keyword.
         ('RETURN', r'return'),  # Return keyword.
         ('NUMBER', r'\d+(\.\d*)?'),  # Integer or decimal number.
         ('IDENTIFIER', r'[_a-zA-Z][_a-zA-Z0-9]{0,30}'),  # Variable or function name.

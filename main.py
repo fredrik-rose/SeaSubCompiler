@@ -26,13 +26,12 @@ def main():
                         help=".dot file to store the abstract syntax tree")
     parser.add_argument('--symbol-table', type=pathlib.Path, metavar='symbol-table.dot',
                         help=".dot file to store the symbol table")
-    parser.add_argument('--intermediate-code', type=pathlib.Path, metavar='intermediate-code.ic',
-                        help="file to store the intermediate code")
+    parser.add_argument('--save-intermediate-code', action='store_true', help="save the intermediate code")
     args = parser.parse_args()
     seasub.run(args.input, f'{os.path.splitext(args.input)[0]}.s', args.optimization_level,
                ast_graph_path=args.ast,
                symbol_table_graph_path=args.symbol_table,
-               intermediate_code_path=args.intermediate_code)
+               save_intermediate_code=args.save_intermediate_code)
 
 
 if __name__ == "__main__":

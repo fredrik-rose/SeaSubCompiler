@@ -1,6 +1,7 @@
 """
 The sea sub compiler.
 """
+import os
 import sys
 
 from seasub import abstract_syntax_tree as ast
@@ -15,7 +16,7 @@ from seasub import target_code_generator as tcg
 
 
 def run(input_file_path, output_file_path, optimization_level,
-        ast_graph_path=None, symbol_table_graph_path=None, intermediate_code_path=None):
+        ast_graph_path=None, symbol_table_graph_path=None, save_intermediate_code=False):
     with open(input_file_path, 'r') as file:
         source_code = file.read()
     try:
@@ -34,5 +35,5 @@ def run(input_file_path, output_file_path, optimization_level,
         ast.save_graph(abstract_syntax_tree, ast_graph_path)
     if symbol_table_graph_path:
         symtab.save_graph(symbol_table, symbol_table_graph_path)
-    if intermediate_code_path:
-        icg.save_code(intermediate_code, intermediate_code_path)
+    if save_intermediate_code:
+        icg.save_code(intermediate_code, f'{os.path.splitext(input_file_path)[0]}.ic')

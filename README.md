@@ -8,7 +8,7 @@ A compiler for a small subset (sub) of the C (sea) programming language.
 
 Stand in the root if the SeaSubCompiler directory and run:
 ```
-python main.py -o 1 --ast ast.dot --symbol-table symbol-table.dot --intermediate-code intermediate-code.ic demo.c
+python main.py -o 1 --save-intermediate-code --ast ast.dot --symbol-table symbol-table.dot demo.c
 ```
 
 This will compile *demo.c* into an assembly file named *demo.s*.

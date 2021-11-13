@@ -17,7 +17,6 @@ This will compile *demo.c* into an assembly file named *demo.s*.
 
 To create an executable from the assembly file one can for example use gcc as follows.
 
-
 Compile the assembly file into an object file:
 ```
 gcc -c demo.s
@@ -65,11 +64,16 @@ The lexical analyzer (also known as scanner or tokenizer). This is the first ste
 sea sub source code as input and outputs tokens (e.g. numbers, brackets, operators, etc.). It performs the first part
 of the syntax check as it only accepts tokens that are part of the sea sub language.
 
+It is implemented as a generator, producing a stream tokens.
+
 ### Parser
 
 The second step of the compiler takes tokens from the lexer as input and outputs an abstract syntax tree. It performs
 the second part of the syntax check by verifying that the stream of tokens fulfills the grammar of the sea sub
 language. It is this part of the compiler that implements the grammar as a recursive descent parser.
+
+An additional layer is added on top of the raw lexer, providing extra functionality like peeking on the next token
+and error handling. This is then used by the parser, not the raw lexer.
 
 #### Abstract Syntax Tree
 
@@ -78,8 +82,10 @@ implementing the *visitor* design pattern. The sub classes of the node visitor p
 each relevant node in the abstract syntax tree. The default visitor will be used for nodes that do not have a visitor.
 The Sea sub compiler uses the node visitor heavily, for example:
 
-* Semantic analysis
 * Symbol table creation
+* Semantic analysis
+* Optimization
+* Intermediate code generation
 * Visualization
 
 <img src="img/abstract-syntax-tree.png" width="1000"/>
@@ -194,17 +200,27 @@ correctness and declaration of variables before use.
 
 A prerequisite for this stage is that a symbol table has been attached to the abstract syntax tree.
 
+The semantic analyzer is designed so that each semantic check is completely separated from each other. This makes
+the code very clean and robust, it is easy to add or alter one semantic check without affecting the others.
+
+Note that the semantic analyzer is separated from other parts of the compiler. It is for example completely decoupled
+from the creation of the abstract syntax tree and the creation of the symbol table.
+
 ### Optimizer
 
 The fourth step of the compiler performs optimizations on the abstract syntax tree. The output is a modified abstract
 syntax tree. Currently only constant folding is implemented. Optimization is probably the most important part of a
 compiler and it can be performed in several of the compilation stages.
 
+Like the semantic analyzer, the optimizer is designed so that each optimization is completely separated from each
+other. This makes the code very clean and robust, it is easy to add or alter one optimization without affecting the
+others.
+
 ### Intermediate Code Generator
 
 The fifth step of the compiler generates intermediate code from the abstract syntax tree. Intermediate code is a
 platform independent assembler like representation of the program. The symbol table is extended with temporary
-variables (named e.g. *$1*, *$2*, etc.) as needed.
+variables (named e.g. *$1*, *$2*, etc.) as needed. From this point the abstract syntax tree is no longer needed.
 
 The Sea sub compiler uses the quadruple format for the intermediate code:
 ```
@@ -290,6 +306,8 @@ def _(arg):
 def _(arg):
     print("arg is a list")
 ```
+
+This means that functionality can easily be added or removed without affecting anything else.
 
 #### Calling Convention
 

@@ -82,6 +82,8 @@ The Sea sub compiler uses the node visitor heavily, for example:
 * Symbol table creation
 * Visualization
 
+<img src="img/abstract-syntax-tree.png" width="1000"/>
+
 #### Grammar
 
 This section defines the grammar of the sea sub language.
@@ -340,6 +342,8 @@ To support lexical scoping the symbol table is implemented as tree, where each n
 The nodes are implemented as a hash map (i.e. dictionary) where the key is the id (name) of the symbol. The [] operator
 is overloaded to first look for a symbol in the current scope and if can't be found the tree is traverse towards the
 root until the symbol is found. Each type of symbol is implemented as a separate class.
+
+<img src="img/symbol-table.png" width="600"/>
 
 ### Error Handler
 

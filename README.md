@@ -313,7 +313,10 @@ This means that functionality can easily be added or removed without affecting a
 #### Calling Convention
 
 Although the target architecture is x86-64 the target code generator does not follow a common calling convention
-(e.g. Microsoft x64 or System V AMD64 ABI). Instead it implements its own as follows.
+(e.g. Microsoft x64 or System V AMD64 ABI). This means that a sea sub program
+can not use the C standard library functions. The main thing missing (to conform to System V AMD64 ABI) is that the
+first parameters of a function are passed in registers. The following is the calling convention of the sea sub
+language.
 
 * The stack pointer must always be aligned to 8 bytes (and grows towards lower addresses).
 * Only the *int* data type is supported and the size is 32 bits (i.e. 4 bytes).

@@ -11,7 +11,8 @@ Stand in the root if the SeaSubCompiler directory and run:
 python main.py -o 1 --save-intermediate-code --ast ast.dot --symbol-table symbol-table.dot demo.c
 ```
 
-This will compile *demo.c* into an assembly file named *demo.s*.
+This will compile (with optimization level 1) *demo.c* into an assembly file named *demo.s*. Additionally the
+intermediate code will be saved and graphs (.dot files) will be created for the abstract syntax tree and symbol table.
 
 ### Executable
 

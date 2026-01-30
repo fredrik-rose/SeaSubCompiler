@@ -1,6 +1,6 @@
 # Sea Sub Compiler
 
-<img src="img/seasub.png" width="300"/>
+<img src="img/seasub_ocean.png" width="250"/>
 
 A compiler for a small subset (sub) of the C (sea) programming language.
 
